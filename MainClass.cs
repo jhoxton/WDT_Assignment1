@@ -1,16 +1,23 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Collections.Generic;
+
 namespace Assignment1
 {
     public class MainClass
     {
 
-        SET UP A GIT, YOU GIT
         static void Main(string[] args)
         {
+            productPrint();
             mainMenu();           
         }
         static void mainMenu()  //The main menu method
         {
+            //Item test = new Item("Demo Item");
+
             try
             {
                 int choice = 0;
@@ -28,11 +35,6 @@ namespace Assignment1
                     int userChoice = 0;
                     if (int.TryParse(userinput, out userChoice))//Turns user inout from a string to an int
                     {
-                        //if (userChoice < 1 || userChoice > 4)
-                        //{
-                        //    Console.WriteLine("Invalid number entered , please enter between 1 and  4 ...");
-                        //    //choice = 0;
-                        //}
                         choice = userChoice;
                     }
                     else
@@ -40,16 +42,7 @@ namespace Assignment1
                         Console.WriteLine("Please input number only between 1 and 4");
                         choice = 0;
                     }
-                    //This is the old menu logic
-                    //if (choice == 1)
-                    //    ownerMenu();
-                    //if (choice == 2)
-                    //    franchiseMenu();
-                    //if (choice == 3)
-                    //    customerMenu();
-                    //if (choice == 4)
-                        //Environment.Exit(0);
-                    
+
                     switch (choice)
                     {
                         case 1:
@@ -145,12 +138,16 @@ namespace Assignment1
         static void franchiseMenu()
         //Prompt for Store ID here first
         {
+            Store currentStore = new Store(null, 0);
+           
+            storePrint(currentStore);
+
             try
             {
                 int choice = 0;
                 while (true)
                 {
-                    Console.WriteLine("Welcome to Marvelous Magic(Franchise Holder)\n==============");
+                    Console.WriteLine("Welcome to Marvelous Magic(Franchise Holder - " + currentStore.name +  ")\n ============== ");
                     Console.WriteLine("1. Display Inventory");
                     Console.WriteLine("2. Stock Request(Threshold)");
                     Console.WriteLine("3. Add New Inventory Item");
@@ -182,6 +179,7 @@ namespace Assignment1
                             break;
                         case 3:
                             choice = 3;
+                            //productPrint();
                             //TODO
                             break;
                         case 4:
@@ -230,15 +228,10 @@ namespace Assignment1
                         case 1:
                             choice = 1;
                             //TODO
+                            productPrint();
+
                             break;
-                        case 2:
-                            choice = 2;
-                            //TODO
-                            break;
-                        case 3:
-                            choice = 3;
-                            //TODO
-                            break;
+
                         case 4:
                             mainMenu();
                             break;
@@ -253,6 +246,81 @@ namespace Assignment1
                 Console.WriteLine("System Exception : " + e.Message);
             }
         }//end of customerMenu
+
+
+        static void productPrint(){
+            //"using" specify when the unmanaged resource is needed by your program, and when it is no longer needed. 
+
+            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+            //Creates a new SQL connection "object"
+            {
+                connection.Open();
+                //Opens said "object"
+
+                var command = connection.CreateCommand();
+                //Creates a command
+                command.CommandText = "select * from Product"; //Sets the text for the command
+
+                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
+                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+
+                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+
+                foreach (var row in table.Select())
+                {
+                    Console.WriteLine(row["Name"]);
+                }
+                connection.Close();
+            }
+        } //End of product print
+
+        static Store storePrint(Store dbStore) {
+            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+            //Creates a new SQL connection "object"
+            {
+                connection.Open();
+                //Opens said "object"
+
+                var command = connection.CreateCommand();
+                //Creates a command
+                command.CommandText = "select * from Store"; //Sets the text for the command
+
+                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
+                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+
+                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+
+                Console.WriteLine("{0,-10}  {1,-10} ", "ID", "Name");
+
+                foreach (var row in table.Select())
+                {
+                   
+                    Console.WriteLine(
+                        "{0,-10}  {1,-10} ", row["StoreID"], row["Name"]);
+                }
+                Console.WriteLine("Enter the store to use: ");
+
+                string userinput = Console.ReadLine();
+
+                foreach (DataRow row in table.Rows)
+                {
+                    string name = row["StoreID"].ToString();
+                    if(userinput == name) {
+                        //Console.WriteLine("YEAHHH");
+                        //Console.WriteLine(dbStore.name + " store name");
+
+                        dbStore.name = row["name"].ToString();
+                     
+                        //Write store stock and shit here
+
+                    }
+
+                }
+
+                connection.Close();
+                return dbStore;
+            }
+        }//End of store print
 
     } //class
 
