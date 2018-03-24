@@ -80,7 +80,7 @@ namespace Assignment1
 
                        
 
-                        Console.WriteLine("YEAHHH");
+                        //Console.WriteLine("YEAHHH");
                         //Console.WriteLine(dbStore.name + " store name");
 
                         this.setName(row["name"].ToString());
