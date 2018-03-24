@@ -137,12 +137,22 @@ namespace Assignment1
 
         } // end of ownerMenu
 
-        static void franchiseMenu()
+        public static void franchiseMenu()
         //Prompt for Store ID here first
         {
-            Store currentStore = new Store(null, 0);
            
-            storePrint(currentStore);
+
+
+
+            Store currentStore = new Store(null, 0);
+         
+
+
+
+            //Store testStore = new Store(null, 0);
+
+            currentStore.storePrint();
+            //storePrint(currentStore);
 
             try
             {
@@ -199,6 +209,13 @@ namespace Assignment1
             }
         }//end of franchiseMenu
 
+        private static void populateInventory(List<Item> storeInventory)
+        {
+
+
+            throw new NotImplementedException();
+        }//End of populate method
+
         static void customerMenu()
         {
             //Prompt for store ID here
@@ -253,6 +270,9 @@ namespace Assignment1
 
 
         static Item productPrint(Item dbItem){
+
+
+
             //"using" specify when the unmanaged resource is needed by your program, and when it is no longer needed. 
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
@@ -285,53 +305,53 @@ namespace Assignment1
             }
         } //End of product print
 
-        static Store storePrint(Store dbStore) {
-            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            //Creates a new SQL connection "object"
-            {
-                connection.Open();
-                //Opens said "object"
+        //static Store storePrint(Store dbStore) {
+        //    using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+        //    //Creates a new SQL connection "object"
+        //    {
+        //        connection.Open();
+        //        //Opens said "object"
 
-                var command = connection.CreateCommand();
-                //Creates a command
-                command.CommandText = "select * from Store"; //Sets the text for the command
+        //        var command = connection.CreateCommand();
+        //        //Creates a command
+        //        command.CommandText = "select * from Store"; //Sets the text for the command
 
-                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
-                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+        //        var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
+        //        var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
 
-                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+        //        adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
 
-                Console.WriteLine("{0,-10}  {1,-10} ", "ID", "Name");
+        //        Console.WriteLine("{0,-10}  {1,-10} ", "ID", "Name");
 
-                foreach (var row in table.Select())
-                {
+        //        foreach (var row in table.Select())
+        //        {
                    
-                    Console.WriteLine(
-                        "{0,-10}  {1,-10} ", row["StoreID"], row["Name"]);
-                }
-                Console.WriteLine("Enter the store to use: ");
+        //            Console.WriteLine(
+        //                "{0,-10}  {1,-10} ", row["StoreID"], row["Name"]);
+        //        }
+        //        Console.WriteLine("Enter the store to use: ");
 
-                string userinput = Console.ReadLine();
+        //        string userinput = Console.ReadLine();
 
-                foreach (DataRow row in table.Rows)
-                {
-                    string name = row["StoreID"].ToString();
-                    if(userinput == name) {
-                        //Console.WriteLine("YEAHHH");
-                        //Console.WriteLine(dbStore.name + " store name");
+        //        foreach (DataRow row in table.Rows)
+        //        {
+        //            string name = row["StoreID"].ToString();
+        //            if(userinput == name) {
+        //                //Console.WriteLine("YEAHHH");
+        //                //Console.WriteLine(dbStore.name + " store name");
 
-                        dbStore.setName(row["name"].ToString());
+        //                dbStore.setName(row["name"].ToString());
                      
-                        //Write store stock and shit here
+        //                //Write store stock and shit here
 
-                    }
+        //            }
 
-                }
+        //        }
 
-                connection.Close();
-                return dbStore;
-            }
-        }//End of store print
+        //        connection.Close();
+        //        return dbStore;
+        //    }
+        //}//End of store print
 
     } //class
 

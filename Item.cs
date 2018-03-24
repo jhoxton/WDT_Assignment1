@@ -31,5 +31,9 @@ namespace Assignment1
             id = itemId;
             name = itemName;
         }
+
+        public Item()
+        {
+        }
     }
 }
