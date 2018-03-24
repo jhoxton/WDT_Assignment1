@@ -11,7 +11,9 @@ namespace Assignment1
 
         static void Main(string[] args)
         {
-            productPrint();
+            //Item currentItem = new Item(null, 0);
+
+            //productPrint(currentItem);
             mainMenu();           
         }
         static void mainMenu()  //The main menu method
@@ -147,7 +149,7 @@ namespace Assignment1
                 int choice = 0;
                 while (true)
                 {
-                    Console.WriteLine("Welcome to Marvelous Magic(Franchise Holder - " + currentStore.name +  ")\n ============== ");
+                    Console.WriteLine("Welcome to Marvelous Magic(Franchise Holder - " + currentStore.getName() +  ")\n ============== ");
                     Console.WriteLine("1. Display Inventory");
                     Console.WriteLine("2. Stock Request(Threshold)");
                     Console.WriteLine("3. Add New Inventory Item");
@@ -200,6 +202,8 @@ namespace Assignment1
         static void customerMenu()
         {
             //Prompt for store ID here
+            Item currentItem = new Item(null, 0);
+
             try
             {
                 int choice = 0;
@@ -228,7 +232,7 @@ namespace Assignment1
                         case 1:
                             choice = 1;
                             //TODO
-                            productPrint();
+                            productPrint(currentItem);
 
                             break;
 
@@ -248,7 +252,7 @@ namespace Assignment1
         }//end of customerMenu
 
 
-        static void productPrint(){
+        static Item productPrint(Item dbItem){
             //"using" specify when the unmanaged resource is needed by your program, and when it is no longer needed. 
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
@@ -266,11 +270,18 @@ namespace Assignment1
 
                 adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
 
+                Console.WriteLine("{0,-10}  {1,-10}", "ProductID", "Product");
+
                 foreach (var row in table.Select())
                 {
-                    Console.WriteLine(row["Name"]);
+                    Console.WriteLine(
+                        "{0,-10}  {1,-10}", row["ProductID"], row["Name"]);
+                  
                 }
+                Console.WriteLine("Select a product");
+
                 connection.Close();
+                return dbItem;
             }
         } //End of product print
 
@@ -309,7 +320,7 @@ namespace Assignment1
                         //Console.WriteLine("YEAHHH");
                         //Console.WriteLine(dbStore.name + " store name");
 
-                        dbStore.name = row["name"].ToString();
+                        dbStore.setName(row["name"].ToString());
                      
                         //Write store stock and shit here
 
