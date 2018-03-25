@@ -14,6 +14,8 @@ namespace Assignment1
             //Item currentItem = new Item(null, 0);
 
             //productPrint(currentItem);
+
+           
             mainMenu();           
         }
         static void mainMenu()  //The main menu method
@@ -142,14 +144,20 @@ namespace Assignment1
         {
             //List<Item> storeInventory = new List<Item>();
 
-            Dictionary<int, int> storeInventory = new Dictionary<int, int>();
+            Dictionary<int, int> stockLevel = new Dictionary<int, int>();
+            //Two ints, one for id, the other for stock level
+
+            List<Item> storeInventory = new List<Item>();
+
 
 
             Store currentStore = new Store(null, 0);
 
             currentStore.storePrint();
 
-            populateInventory(storeInventory, currentStore);
+            getInventory(stockLevel, currentStore);
+
+            populateInventory(stockLevel, storeInventory);
 
             //foreach (KeyValuePair<int, int> item in storeInventory)
             //{
@@ -186,10 +194,11 @@ namespace Assignment1
                     {
                         case 1:
                             choice = 1;
-                            //TODO
+                            printInventory();
                             break;
                         case 2:
                             choice = 2;
+                          
                             //TODO
                             break;
                         case 3:
@@ -212,7 +221,7 @@ namespace Assignment1
             }
         }//end of franchiseMenu
 
-        private static Dictionary<int, int> populateInventory(Dictionary<int, int> storeInventory, Store currentStore)
+        private static Dictionary<int, int> getInventory(Dictionary<int, int> stockLevel, Store currentStore)
         {
             //Loop over SQL StoreInventory and get each db.ProdcutID and related db.StockLevel that matches 
             //currentStore's db.StoreID. 
@@ -241,13 +250,16 @@ namespace Assignment1
                     if(searchID == dbId) {
                         //Console.WriteLine("Matched ID for each item is: " + dbId);
 
+                       
+
+
                         int prodID = ((int)row["ProductID"]);
                         int stock = ((int)row["StockLevel"]);
 
                         //Console.WriteLine("ID is " + prodID);
                         //Console.WriteLine("Stock level is " +stock);
                         //command.CommandText = "select * from "
-                        storeInventory.Add(prodID, stock);
+                        stockLevel.Add(prodID, stock);
                     }
 
                 }
@@ -256,7 +268,7 @@ namespace Assignment1
 
 
 
-            return storeInventory;
+            return stockLevel;
 
         }//End of populate method
 
@@ -314,8 +326,66 @@ namespace Assignment1
             }
         }//end of customerMenu
 
+        public static void populateInventory(Dictionary<int, int> stockLevel, List<Item> storeInventory)
+        { //Matches the stockLevel dict with store items
+            
+            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
-       
+            {
+                connection.Open();
+                //Opens said "object"
+
+                var command = connection.CreateCommand();
+                //Creates a command
+                command.CommandText = "select * from Product"; //Sets the text for the command
+
+                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
+                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+
+                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+
+                //NEED TO MATCH EACH ITEM FROM THE DICT TO THE RELEVENT ITEM
+
+               
+                for (int i = (-1); i < stockLevel.Count; i++){
+
+                    foreach (var row in table.Select())
+                    {
+                        int dbID = ((int)row["ProductID"]);
+                        if(i ==dbID) {
+                            //Console.WriteLine("IT BLOODY WORKED!!! This store has " + dbID);
+                            string name = row["Name"].ToString();
+                            int id = ((int)row["ProductID"]);
+                            Item adding = new Item(name, id);
+                            storeInventory.Add(adding);
+                            //Console.WriteLine("The item we just added was : " + adding.getName());
+
+                        }
+                    }
+
+                   
+                }
+
+
+
+
+                //Console.WriteLine("{0,-10}  {1,-10}", "ProductID", "Product");
+
+                //foreach (var row in table.Select())
+                //{
+                //    Console.WriteLine(
+                //        "{0,-10}  {1,-10}", row["ProductID"], row["Name"]);
+
+                //}
+                //return storeInventory;
+                connection.Close();
+            }
+        }//end of populate method
+
+        public static void printInventory()
+        {
+            Console.WriteLine("{0,-10}  {1,-10} {2, -10}", "ID", "Product","Current Stock" );
+        }
 
     } //class
 
