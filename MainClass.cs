@@ -140,21 +140,21 @@ namespace Assignment1
         public static void franchiseMenu()
         //Prompt for Store ID here first
         {
-            List<Item> storeInventory = new List<Item>();
+            //List<Item> storeInventory = new List<Item>();
+
+            Dictionary<int, int> storeInventory = new Dictionary<int, int>();
+
 
             Store currentStore = new Store(null, 0);
 
             currentStore.storePrint();
 
-            //Console.WriteLine(currentStore.getName());
-
             populateInventory(storeInventory, currentStore);
 
-            //foreach( Item shit in storeInventory) {
-            //    Console.WriteLine(shit.getName());
+            //foreach (KeyValuePair<int, int> item in storeInventory)
+            //{
+            //    Console.WriteLine("Key: {0}, Value: {1}", item.Key, item.Value);
             //}
-          
-
           
 
             try
@@ -212,55 +212,46 @@ namespace Assignment1
             }
         }//end of franchiseMenu
 
-        private static List<Item> populateInventory(List<Item> storeInventory, Store currentStore)
+        private static Dictionary<int, int> populateInventory(Dictionary<int, int> storeInventory, Store currentStore)
         {
+            //Loop over SQL StoreInventory and get each db.ProdcutID and related db.StockLevel that matches 
+            //currentStore's db.StoreID. 
+            //Add this the the populateInventory Dicionary
 
-            //Item test = new Item("TEST", 0);
-            //storeInventory.Add(test);
+            int searchID = currentStore.getId();
+            //Console.WriteLine(searchID + " is searchID");
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
             {
-                //int storeID = currentStore.getId();
-
-
                 connection.Open();
+
                 var command = connection.CreateCommand();
+
                 command.CommandText = "select * from StoreInventory"; //Sets the text for the command
 
-                var itemTable = new DataTable();
-                var adapter = new SqlDataAdapter(command); 
+                var table = new DataTable();
+                var adapter = new SqlDataAdapter(command);
 
-                adapter.Fill(itemTable);
+                adapter.Fill(table);
 
-                foreach (DataRow row in itemTable.Rows)
+                foreach (var row in table.Select())
                 {
+                    int dbId = ((int)row["StoreId"]);
 
-                    int dbStoreId= ((int)row["StoreId"]);
+                    if(searchID == dbId) {
+                        //Console.WriteLine("Matched ID for each item is: " + dbId);
 
-                    //Console.WriteLine(dbStoreId);
-                    //List<int> test = new List<int>();
+                        int prodID = ((int)row["ProductID"]);
+                        int stock = ((int)row["StockLevel"]);
 
-                    if (currentStore.getId() == dbStoreId) {
-                     //Console.WriteLine("YYYEEEAAAHAHH");
-                        int idsInInvetory =((int)row["ProductID"]);
-                       
-
-                        Console.WriteLine("Prod ID in inventory is: "+ idsInInvetory);
-                        Item addItem = new Item(null, 0);
-                        getItem(idsInInvetory, addItem);
-
-                        storeInventory.Add(addItem);
-
-                        foreach(var shit in storeInventory){
-                            Console.WriteLine("Returned items"+shit.getName());
-                        }
-                      //NEED TO MATCH THE PRODUCT ID FROM THE PRODUCT TABLE
-
-
-                        //Item addItem = new Item(null, 0);
-
+                        //Console.WriteLine("ID is " + prodID);
+                        //Console.WriteLine("Stock level is " +stock);
+                        //command.CommandText = "select * from "
+                        storeInventory.Add(prodID, stock);
                     }
+
                 }
+
             }
 
 
@@ -269,51 +260,7 @@ namespace Assignment1
 
         }//End of populate method
 
-        public static Item getItem(int item, Item addItem) {
-            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            {
-                connection.Open();
-                //Opens said "object"
 
-                var command = connection.CreateCommand();
-                //Creates a command
-                command.CommandText = "select * from Product"; //Sets the text for the command
-
-                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
-                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
-
-                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
-
-                Console.WriteLine("ProductID in new method is: " + item);
-                Item tempItem = new Item(null, 0);
-
-             
-                    
-
-                foreach (var row in table.Select())
-                {
-                    //Item addItem = new Item(null, 0);
-
-                    int input = ((int)row["ProductID"]);
-                    if (item == input) {
-                        Console.WriteLine("FOUND");
-
-                        addItem.setName(row["name"].ToString());
-                        addItem.setId((int)row["ProductID"]);
-
-            
-                }
-                    
-
-                }
-
-
-                connection.Close();
-
-            }
-
-            return addItem;
-        }
 
         static void customerMenu()
         {
@@ -366,6 +313,9 @@ namespace Assignment1
                 Console.WriteLine("System Exception : " + e.Message);
             }
         }//end of customerMenu
+
+
+       
 
     } //class
 
