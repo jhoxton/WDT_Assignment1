@@ -375,12 +375,12 @@ namespace Assignment1
                     if (int.TryParse(userinput, out userChoice)| userinput != "N" | userinput != "R")
                     {
                         choice = userChoice;
-                        Console.WriteLine("User choice is: " + userChoice);
+                        //Console.WriteLine("User choice is: " + userChoice);
                         prodInput = userChoice;
 
 
-                        Console.WriteLine("1st Input is " + prodInput);
-                        purcharse(prodInput);
+                        //Console.WriteLine("1st Input is " + prodInput);
+                        purcharse(prodInput, storeSelect);
                         return prodInput;
                     
                     }
@@ -401,10 +401,40 @@ namespace Assignment1
 
         }//End of productPrint
 
-        public static void purcharse(int prodInput)
+        public static void purcharse(int prodInput, int storeSelect)
         {
-            Console.WriteLine("Passed Input is " + prodInput);
-            //THIS METHOD CALLS AND UPDATES THE DATABASE
+            int newQuant = prodInput;
+            Console.WriteLine("Enter quantity to purchase: ");
+
+                                                                string userinput = Console.ReadLine();
+                                                                var selectedID = prodInput;
+            var storeInvToAccess = storeSelect;
+                                                                //NEED INPUT VALIDATION HERE. TRY/CATCH BLOCK
+
+            //string userinput = Console.ReadLine();
+
+            SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
+
+            sqlOp.Open();
+
+            var sqlText = @"UPDATE StoreInventory
+                SET StockLevel = @quantity
+                WHERE ProductID = @inventoryID
+                AND StoreID = @storeID";
+            
+            SqlCommand dbCommand = new SqlCommand(sqlText, sqlOp);
+            dbCommand.Parameters.AddWithValue("quantity", newQuant);
+            dbCommand.Parameters.AddWithValue("inventoryID",selectedID );
+            dbCommand.Parameters.AddWithValue("storeID", storeSelect);
+
+            dbCommand.Connection = sqlOp;
+
+            dbCommand.ExecuteNonQuery();
+
+                    
+
+                      
+
 
         } //end of purcharse()
 
@@ -495,6 +525,8 @@ namespace Assignment1
 
             return storeSelect;
         }//End of store print
+
+
     } //class
 
 
