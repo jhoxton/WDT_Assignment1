@@ -15,7 +15,8 @@ namespace Assignment1
             //Item currentItem = new Item(null, 0);
 
             //productPrint(currentItem);
-           
+            SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
+
             mainMenu();           
         }
 
@@ -264,64 +265,15 @@ namespace Assignment1
             }
         }//end of franchiseMenu
 
-        //private static Dictionary<int, int> getInventory(Dictionary<int, int> stockLevel, Store currentStore)
-        //{
-        //    //Loop over SQL StoreInventory and get each db.ProdcutID and related db.StockLevel that matches 
-        //    //currentStore's db.StoreID. 
-        //    //Add this the the populateInventory Dicionary
-
-        //    int searchID = currentStore.getId();
-        //    //Console.WriteLine(searchID + " is searchID");
-
-        //    using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-        //    {
-        //        connection.Open();
-
-        //        var command = connection.CreateCommand();
-
-        //        command.CommandText = "select * from StoreInventory"; //Sets the text for the command
-
-        //        var table = new DataTable();
-        //        var adapter = new SqlDataAdapter(command);
-
-        //        adapter.Fill(table);
-
-        //        foreach (var row in table.Select())
-        //        {
-        //            int dbId = ((int)row["StoreId"]);
-
-        //            if(searchID == dbId) {
-        //                //Console.WriteLine("Matched ID for each item is: " + dbId);
-
-                       
-
-
-        //                int prodID = ((int)row["ProductID"]);
-        //                int stock = ((int)row["StockLevel"]);
-
-        //                //Console.WriteLine("ID is " + prodID);
-        //                //Console.WriteLine("Stock level is " +stock);
-        //                //command.CommandText = "select * from "
-        //                stockLevel.Add(prodID, stock);
-        //            }
-
-        //        }
-
-        //    }
-
-
-
-        //    return stockLevel;
-
-        //}//End of populate method
-
 
 
         static void customerMenu()
         {
             //Prompt for store ID here
-            int storeSelect =0;
-            storePrint(storeSelect);
+            int storeSelect = 0;
+            storeSelect= storePrint(storeSelect);
+            //productPrint(storeSelect);
+            int prodInput = 0;
 
             try
             {
@@ -350,9 +302,11 @@ namespace Assignment1
                     {
                         case 1:
                             choice = 1;
-                           
-                            productPrint(storeSelect);
-                            purcharse();
+                            productPrint(storeSelect, prodInput);
+                            int passedInput = prodInput;
+
+                            //int prodInput = 0;
+                            //purcharse(prodInput);
 
                             break;
 
@@ -371,46 +325,129 @@ namespace Assignment1
             }
         }//end of customerMenu
 
-        public static void productPrint(int storeSelect)
+        public static int productPrint(int storeSelect, int prodInput)
         {
+            List<int> storeItems = new List<int>();
 
-            //SCAN OVER storeSelect STORE INVENTORY THEN ITEM
+            getStoreInv(storeItems,storeSelect);
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
             //Creates a new SQL connection "object"
             {
                 connection.Open();
-                //Opens said "object"
 
                 var command = connection.CreateCommand();
-                //Creates a command
-                command.CommandText = "select * from Product"; //Sets the text for the command
+                command.CommandText = "select * from Product";
 
-                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
-                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+                var table = new DataTable();
+                var adapter = new SqlDataAdapter(command);
 
-                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+                adapter.Fill(table);
 
                 Console.WriteLine("{0,-10}  {1,-10}", "ProductID", "Product");
 
+                    foreach (var row in table.Select())
+                    {
+                        foreach (int i in storeItems)
+                        {
+                            if (i == (int)row["ProductID"])
+                            {
+                                Console.WriteLine(
+                                "{0,-10}  {1,-10}", row["ProductID"], row["Name"]);
+                                
+                            }
+                        }
+                    }
+                connection.Close();
+
+            }
+            Console.WriteLine("\n[Legend: 'N' Next Page | 'R' Return to Menu\n\nEnter product ID purchase or function:");
+            Console.WriteLine();
+
+            try {
+                int choice = 0;
+                while (choice == 0)
+                {
+                    string userinput = Console.ReadLine();
+
+                    //validation here
+                    int userChoice = 0;
+                    if (int.TryParse(userinput, out userChoice)| userinput != "N" | userinput != "R")
+                    {
+                        choice = userChoice;
+                        Console.WriteLine("User choice is: " + userChoice);
+                        prodInput = userChoice;
+
+
+                        Console.WriteLine("1st Input is " + prodInput);
+                        purcharse(prodInput);
+                        return prodInput;
+                    
+                    }
+                    else
+                    {
+                        Console.WriteLine("Please input number only between 1 and 4");
+                        choice = 0;
+                    }
+                }
+
+            } catch (Exception e) {
+                Console.WriteLine("System Exception : " + e.Message);
+            }
+         
+
+            return prodInput;
+
+
+        }//End of productPrint
+
+        public static void purcharse(int prodInput)
+        {
+            Console.WriteLine("Passed Input is " + prodInput);
+            //THIS METHOD CALLS AND UPDATES THE DATABASE
+
+        } //end of purcharse()
+
+        ////
+       
+
+        public static List<int> getStoreInv(List<int> storeItems, int storeSelect) {
+
+            var selectedID = storeSelect;
+
+            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+            //Creates a new SQL connection "object"
+            {
+                connection.Open();
+
+                var sqlText = "select * from StoreInventory where StoreID = @find";
+
+                SqlCommand dbCommand = new SqlCommand(sqlText, connection);
+                dbCommand.Parameters.AddWithValue("find", selectedID);
+
+                dbCommand.Connection = connection;
+
+                dbCommand.ExecuteNonQuery();
+
+                var table = new DataTable();
+                var adapter = new SqlDataAdapter(dbCommand); 
+
+                adapter.Fill(table);
+
                 foreach (var row in table.Select())
                 {
-                    Console.WriteLine(
-                        "{0,-10}  {1,-10}", row["ProductID"], row["Name"]);
-
+                    //ADD ITEM ID'S TO LIST HERE
+                    int itemInStoreInv = (int)row["ProductID"];
+                    //Console.WriteLine("Passing :" +itemInStoreInv);
+                    storeItems.Add(itemInStoreInv);
                 }
-                Console.WriteLine("Select a product");
-
                 connection.Close();
 
             }
 
-        }//End of productPrint
-        public static void purcharse() {
-            Console.WriteLine("[Legend: 'N' Next Page | 'R' Return to Menu\nEnter product ID purchase or function:");
-        }
-
-        ////
+            return storeItems;   
+        }//END OF getStoreInv 
+      
         public static int storePrint(int storeSelect)
         {
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
@@ -455,11 +492,9 @@ namespace Assignment1
                 connection.Close();
 
             }
-            Console.WriteLine(storeSelect);
+
             return storeSelect;
         }//End of store print
-
-
     } //class
 
 
