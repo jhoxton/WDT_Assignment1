@@ -9,6 +9,7 @@ namespace Assignment1
     {
         private string name;
         private int id;
+        private int quantity;
 
         public string getName()
         {
@@ -29,43 +30,27 @@ namespace Assignment1
             this.id = id;
         }
 
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
 
-        public Item(string itemName, int itemId)
+        public int getQuantity(int quantity) {
+            return quantity;
+        }
+
+        public Item(string itemName, int itemId, int itemQuantity)
         {
             id = itemId;
             name = itemName;
+            quantity = itemQuantity;
         }
-        //public void productPrint()
-        //{
+       
+        public string listStore(int itemInStoreID) {
 
-        //    using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-        //    //Creates a new SQL connection "object"
-        //    {
-        //        connection.Open();
-        //        //Opens said "object"
+            string storeName = "FSAD";
+            DATABASE ACCESS HERE TO GET STORE NAME USING PARAMETER STORE ID
+            return storeName;
+        }
 
-        //        var command = connection.CreateCommand();
-        //        //Creates a command
-        //        command.CommandText = "select * from Product"; //Sets the text for the command
-
-        //        var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
-        //        var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
-
-        //        adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
-
-        //        Console.WriteLine("{0,-10}  {1,-10}", "ProductID", "Product");
-
-        //        foreach (var row in table.Select())
-        //        {
-        //            Console.WriteLine(
-        //                "{0,-10}  {1,-10}", row["ProductID"], row["Name"]);
-
-        //        }
-        //        Console.WriteLine("Select a product");
-
-        //        connection.Close();
-               
-        //    }
-        //}
     }
 }

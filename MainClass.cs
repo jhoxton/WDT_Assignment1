@@ -8,7 +8,7 @@ namespace Assignment1
 {
     public class MainClass
     {
-
+        //ONCE EVERYTHING IS DONE, BREAK THIS UP INTO CLASS LIBRARIES TO USE
       
         static void Main(string[] args)
         {
@@ -198,8 +198,11 @@ namespace Assignment1
         {
             //List<Item> storeInventory = new List<Item>();
 
+            //Item test = new Item(null,0,0);
 
-            Store currentStore = new Store(null, 0);
+            //Store currentStore = new Store(null, 0);
+
+            //currentStore.storeInventory.Add(test);
 
 
 
@@ -214,7 +217,7 @@ namespace Assignment1
                 int choice = 0;
                 while (true)
                 {
-                    Console.WriteLine("Welcome to Marvelous Magic(Franchise Holder - " + currentStore.getName() +  ")\n ============== ");
+                    //Console.WriteLine("Welcome to Marvelous Magic(Franchise Holder - " + currentStore.getName() +  ")\n ============== ");
                     Console.WriteLine("1. Display Inventory");
                     Console.WriteLine("2. Stock Request(Threshold)");
                     Console.WriteLine("3. Add New Inventory Item");
@@ -269,10 +272,13 @@ namespace Assignment1
 
         static void customerMenu()
         {
-            //Prompt for store ID here
+            Store currentStore = new Store(null, 0);
             int storeSelect = 0;
-            storeSelect= storePrint(storeSelect);
-            //productPrint(storeSelect);
+
+            storeSelect= currentStore.storePrint(storeSelect); //THIS WILL SEND BACK A STORE ITEM (NOT INCLUDING STORE INVENTORY)
+
+            Console.WriteLine("Store select is now " + currentStore.getName());
+
             int prodInput = 0;
 
             try
@@ -302,11 +308,12 @@ namespace Assignment1
                     {
                         case 1:
                             choice = 1;
-                            productPrint(storeSelect, prodInput);
-                            int passedInput = prodInput;
 
-                            //int prodInput = 0;
-                            //purcharse(prodInput);
+                            //Uses the Store ID to get the inventory from the DB, then loops over the 
+                            //Store objects Item List, adding each item(which loops over the DB inventory to add quantity to each item
+                            productPrint(currentStore, prodInput);
+
+                            int passedInput = prodInput;
 
                             break;
 
@@ -325,11 +332,23 @@ namespace Assignment1
             }
         }//end of customerMenu
 
-        public static int productPrint(int storeSelect, int prodInput)
+        public static int productPrint(Store currentStore, int prodInput)
         {
-            List<int> storeItems = new List<int>();
+            List<int> storeItemsIntID = new List<int>();
+            Item test = new Item(null,0,0);
+           
+            //currentStore.storeInventory.Add(test);
+            //foreach(Item shit in currentStore.storeInventory) {
+            //    Console.WriteLine("AYAYAYAYAYA");
+            //}
 
-            getStoreInv(storeItems,storeSelect);
+
+            //THIS WILL BE A METHOD (MAYBE IN ITEM???) THAT WILL FILL THE STORE INVENTORY LIST FROM THE DATABASE
+
+            currentStore.getStoreInv(storeItemsIntID);
+
+
+            //getStoreInv(storeSelect);
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
             //Creates a new SQL connection "object"
@@ -344,18 +363,30 @@ namespace Assignment1
 
                 adapter.Fill(table);
 
-                Console.WriteLine("{0,-10}  {1,-10}", "ProductID", "Product");
+                Console.WriteLine("{0,-10}  {1,-10} {2,-10}", "ProductID", "Product", "Quantity");
 
                     foreach (var row in table.Select())
                     {
-                        foreach (int i in storeItems)
+                    foreach (int i in storeItemsIntID)
+                        // So this prints the int id. Use it with getID for the currentSoteres item List
+                        //foreach(Item j in currentStore.storeInventory)
+
+
+
                         {
-                            if (i == (int)row["ProductID"])
+                        if (i == (int)row["ProductID"])
+                            
                             {
+                            int fuck = 0;
                                 Console.WriteLine(
-                                "{0,-10}  {1,-10}", row["ProductID"], row["Name"]);
+                                "{0,-10}  {1,-10} {2,-10}", row["ProductID"], row["Name"], fuck);
                                 
                             }
+                        foreach (Item shit in currentStore.storeInventory)
+                        {
+                            Console.WriteLine("YAYAYAYAYAYA");
+                            Console.WriteLine(currentStore.storeInventory);
+                        }
                         }
                     }
                 connection.Close();
@@ -375,13 +406,13 @@ namespace Assignment1
                     if (int.TryParse(userinput, out userChoice)| userinput != "N" | userinput != "R")
                     {
                         choice = userChoice;
-                        //Console.WriteLine("User choice is: " + userChoice);
+
                         prodInput = userChoice;
 
 
                         //Console.WriteLine("1st Input is " + prodInput);
-                        purcharse(prodInput, storeSelect);
-                        return prodInput;
+                        purcharse(prodInput, 0);
+                        //return prodInput;
                     
                     }
                     else
@@ -403,6 +434,9 @@ namespace Assignment1
 
         public static void purcharse(int prodInput, int storeSelect)
         {
+
+            //THIS WILL WRITE BACK TO THE DATABASE WITH WHAT EVER THE ITEM PURCHASED WAS
+
             int newQuant = prodInput;
             Console.WriteLine("Enter quantity to purchase: ");
 
@@ -441,90 +475,92 @@ namespace Assignment1
         ////
        
 
-        public static List<int> getStoreInv(List<int> storeItems, int storeSelect) {
+        //public static List<int> getStoreInv(List<int> storeItems, int storeSelect) {
 
-            var selectedID = storeSelect;
+        //    var selectedID = storeSelect;
 
-            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            //Creates a new SQL connection "object"
-            {
-                connection.Open();
+        //    //WRITE TO STORE OBJECT HERE AND PASS IT BACK!!!
 
-                var sqlText = "select * from StoreInventory where StoreID = @find";
+        //    using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+        //    //Creates a new SQL connection "object"
+        //    {
+        //        connection.Open();
 
-                SqlCommand dbCommand = new SqlCommand(sqlText, connection);
-                dbCommand.Parameters.AddWithValue("find", selectedID);
+        //        var sqlText = "select * from StoreInventory where StoreID = @find";
 
-                dbCommand.Connection = connection;
+        //        SqlCommand dbCommand = new SqlCommand(sqlText, connection);
+        //        dbCommand.Parameters.AddWithValue("find", selectedID);
 
-                dbCommand.ExecuteNonQuery();
+        //        dbCommand.Connection = connection;
 
-                var table = new DataTable();
-                var adapter = new SqlDataAdapter(dbCommand); 
+        //        dbCommand.ExecuteNonQuery();
 
-                adapter.Fill(table);
+        //        var table = new DataTable();
+        //        var adapter = new SqlDataAdapter(dbCommand); 
 
-                foreach (var row in table.Select())
-                {
-                    //ADD ITEM ID'S TO LIST HERE
-                    int itemInStoreInv = (int)row["ProductID"];
-                    //Console.WriteLine("Passing :" +itemInStoreInv);
-                    storeItems.Add(itemInStoreInv);
-                }
-                connection.Close();
+        //        adapter.Fill(table);
 
-            }
+        //        foreach (var row in table.Select())
+        //        {
+        //            //ADD ITEM ID'S TO LIST HERE
+        //            int itemInStoreInv = (int)row["ProductID"];
+        //            //Console.WriteLine("Passing :" +itemInStoreInv);
+        //            storeItems.Add(itemInStoreInv);
+        //        }
+        //        connection.Close();
 
-            return storeItems;   
-        }//END OF getStoreInv 
+        //    }
+
+        //    return storeItems;   
+        //}//END OF getStoreInv 
       
-        public static int storePrint(int storeSelect)
-        {
-            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            //Creates a new SQL connection "object"
-            {
-                connection.Open();
-                //Opens said "object"
+        //public static int storePrint(int storeSelect)
+        //{
+        //    using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+        //    //Creates a new SQL connection "object"
+        //    {
+        //        connection.Open();
+        //        //Opens said "object"
 
-                var command = connection.CreateCommand();
-                //Creates a command
-                command.CommandText = "select * from Store"; //Sets the text for the command
+        //        var command = connection.CreateCommand();
+        //        //Creates a command
+        //        command.CommandText = "select * from Store"; //Sets the text for the command
 
-                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
-                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+        //        var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
+        //        var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
 
-                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+        //        adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
 
-                Console.WriteLine("{0,-10}  {1,-10} ", "ID", "Name");
+        //        Console.WriteLine("{0,-10}  {1,-10} ", "ID", "Name");
 
-                foreach (var row in table.Select())
-                {
+        //        foreach (var row in table.Select())
+        //        {
 
-                    Console.WriteLine(
-                        "{0,-10}  {1,-10} ", row["StoreID"], row["Name"]);
-                }
-                Console.WriteLine("Enter the store to use: ");
+        //            Console.WriteLine(
+        //                "{0,-10}  {1,-10} ", row["StoreID"], row["Name"]);
+        //        }
+        //        Console.WriteLine("Enter the store to use: ");
 
-                string userinput = Console.ReadLine();
+        //        string userinput = Console.ReadLine();
 
-                foreach (DataRow row in table.Rows)
-                {
-                    string StoreID = row["StoreID"].ToString();
+        //        foreach (DataRow row in table.Rows)
+        //        {
+        //            string StoreID = row["StoreID"].ToString();
 
-                    if (userinput == StoreID)
-                    {
-                        storeSelect = ((int)row["StoreId"]);
+        //            if (userinput == StoreID)
+        //            {
+        //                storeSelect = ((int)row["StoreId"]);
 
-                    }
+        //            }
 
-                }
+        //        }
 
-                connection.Close();
+        //        connection.Close();
 
-            }
+        //    }
 
-            return storeSelect;
-        }//End of store print
+        //    return storeSelect;
+        //}//End of store print
 
 
     } //class
