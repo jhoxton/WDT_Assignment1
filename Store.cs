@@ -12,7 +12,7 @@ namespace Assignment1
         private int id;
 
 
-        public List<Item> storeInventory = new List<Item>();
+        public List<Item> localStoreInventory = new List<Item>();
 
         public string getName() {
             return name;
@@ -35,28 +35,24 @@ namespace Assignment1
             this.id = id;
         }
 
-        public int storePrint(int storeSelect)
-        {
+        public int storePrint(int storeSelect) //Matches user input StoreID to database to write local Store Object
+        { 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            //Creates a new SQL connection "object"
             {
                 connection.Open();
-                //Opens said "object"
 
                 var command = connection.CreateCommand();
-                //Creates a command
-                command.CommandText = "select * from Store"; //Sets the text for the command
+                command.CommandText = "select * from Store"; 
 
-                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
-                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+                var table = new DataTable();
+                var adapter = new SqlDataAdapter(command); 
 
-                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+                adapter.Fill(table);
 
                 Console.WriteLine("{0,-10}  {1,-10} ", "ID", "Name");
 
                 foreach (var row in table.Select())
                 {
-
                     Console.WriteLine(
                         "{0,-10}  {1,-10} ", row["StoreID"], row["Name"]);
                 }
@@ -69,25 +65,18 @@ namespace Assignment1
                     string StoreID = row["StoreID"].ToString();
                     string StoreName = row["Name"].ToString();
 
-                    if (userinput == StoreID)
+                    if (userinput == StoreID) //Cross check input and StoreID in db
                     {
                         //storeSelect = ((int)row["StoreId"]);
                         this.setId((int)row["StoreId"]);
                         this.setName(row["Name"].ToString());
-
                     }
-
                 }
-
                 connection.Close();
-
             }
-            //this.setId(storeSelect);
 
             //Console.WriteLine("Store ID:" + getId());
             //Console.WriteLine("Store Name: " + getName());
-
-
             //Console.WriteLine("Inside store object, ID is : " + this.getId());
             return storeSelect;
         }//End of store print
@@ -95,7 +84,6 @@ namespace Assignment1
 
         public List<int> getStoreInv(List<int> storeItemsIntID) //Gets the store innventory
         {
-
             var selectedID = this.getId();
 
             //WRITE TO ITEM OBJECTS TO STORE LIST HERE AND PASS IT BACK!!!
@@ -121,55 +109,58 @@ namespace Assignment1
 
                 foreach (var row in table.Select())
                 {
-                    //Use something to write to the local Store List of Items
+
+                    //THE PROBLEM IS HERE WITH THE LOOP NEED TO REMOVE DUPLICATION SOMEHOW
+                  
 
                     int itemInStoreInv = (int)row["ProductID"];//This is the old one
                     int stockLevel = (int)row["StockLevel"];
-                    Console.WriteLine("ID is: " +itemInStoreInv + " Stock is: " + stockLevel);
 
-                    makeItem(itemInStoreInv, stockLevel);
+                    //Console.WriteLine("BEFORE MAKE ITEM ID is: " +itemInStoreInv +  " Stock is: " + stockLevel);
 
-                    //THIS IS RIGHT, NOW JUST ADD ITEMS TO LOCAL LIST
-
-                    //Item itemToAdd = new Item(null, 0, 0);
-
-                    //itemToAdd.setId((int)row["ProductID"]);
-                    //itemToAdd.setName(row["Name"].ToString());
-                    //this.storeInventory.Add(itemToAdd);
-
-                    //Console.WriteLine("Passing to :" +itemInStoreInv);
-
-                    storeItemsIntID.Add(itemInStoreInv);//This is the ID to match to quantity in the StoreInventory table
-
-                  
-
+                   
                     foreach(int i in storeItemsIntID) {
-                        //Console.WriteLine("Item id's is: " + i);
+                        if(i == itemInStoreInv) {
+                            //Dulpicate found
+                        } else {
+                            storeItemsIntID.Add(itemInStoreInv);//This is the ID to match to quantity in the StoreInventory table
+                        }
                     }
+                  
+                    makeItem(itemInStoreInv, stockLevel, storeItemsIntID); //Creates items then adds them to the local soter inventory
+                 
                 }
 
+                //foreach (Item i in localStoreInventory) //Test print on current stores stock
+                //{
+                //    Console.WriteLine("ID is " + i.getId() + " Product Name is " + i.getName() + " Stock is " + i.getStock());
+                //}
 
                 connection.Close();
 
             }
-
+            foreach (int i in storeItemsIntID)
+            {
+                Console.WriteLine("storeItemsIntID list: " + i);
+             
+            }
             return storeItemsIntID;
         }//END OF getStoreInv 
       
-        public int makeItem (int itemInStoreID, int stockLevel ) {
+        public int makeItem (int itemInStoreID, int stockLevel, List<int> storeItemsIntID ) {
 
-            Item addingItem = new Item(null,itemInStoreID, stockLevel);
+            Item addingItem = new Item(null, 0, 0);
+            addingItem.setId(itemInStoreID);
+            addingItem.setStock(stockLevel);
+           
 
-            string storeRetrievedName = addingItem.listStore(itemInStoreID);
-
-            Console.WriteLine("storeRetrievedName is "+ storeRetrievedName);
-
-
-
+            string storeRetrievedName = addingItem.listStore(itemInStoreID); //Gets item name from Item db
             addingItem.setName(storeRetrievedName);
+            Console.WriteLine(storeRetrievedName);
+            //Console.WriteLine("storeRetrievedName is "+ storeRetrievedName);
+            //Console.WriteLine("itemInStoreID is: " + itemInStoreID);
 
-            //ADD TO LOCAL ITEM LIST HERE!!!!!!!!!!!!!!
-
+            localStoreInventory.Add(addingItem);
 
             return itemInStoreID;
 

@@ -272,10 +272,11 @@ namespace Assignment1
 
         static void customerMenu()
         {
-            Store currentStore = new Store(null, 0);
+            Store currentStore = new Store(null, 0); //Empty store object
+
             int storeSelect = 0;
 
-            storeSelect= currentStore.storePrint(storeSelect); //THIS WILL SEND BACK A STORE ITEM (NOT INCLUDING STORE INVENTORY)
+            storeSelect= currentStore.storePrint(storeSelect); //Selects store from database, via StoreID . Writes store info to local store object
 
             Console.WriteLine("Store select is now " + currentStore.getName());
 
@@ -292,7 +293,6 @@ namespace Assignment1
 
                     string userinput = Console.ReadLine();
 
-                    //validation here
                     int userChoice = 0;
                     if (int.TryParse(userinput, out userChoice))
                     {
@@ -311,7 +311,11 @@ namespace Assignment1
 
                             //Uses the Store ID to get the inventory from the DB, then loops over the 
                             //Store objects Item List, adding each item(which loops over the DB inventory to add quantity to each item
-                            productPrint(currentStore, prodInput);
+
+                            productPrint(currentStore, prodInput); //Populates the local stores List of items (localStoreInventory)
+                            //Prints the available items then returns the users selected items and quantity for purchase
+
+
 
                             int passedInput = prodInput;
 
@@ -334,21 +338,17 @@ namespace Assignment1
 
         public static int productPrint(Store currentStore, int prodInput)
         {
-            List<int> storeItemsIntID = new List<int>();
-            Item test = new Item(null,0,0);
-           
-            //currentStore.storeInventory.Add(test);
-            //foreach(Item shit in currentStore.storeInventory) {
-            //    Console.WriteLine("AYAYAYAYAYA");
-            //}
+            List<int> storeItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
+            //TODO Need to validate input to this List to avoid duplicates???
 
-            //THIS WILL BE A METHOD (MAYBE IN ITEM???) THAT WILL FILL THE STORE INVENTORY LIST FROM THE DATABASE
-
-            currentStore.getStoreInv(storeItemsIntID);
-
-
-            //getStoreInv(storeSelect);
+            currentStore.getStoreInv(storeItemsIntID); //Accesses the StoreInventory db to get items and qunatity in store
+            // Then creates new items (id, name and quantity) and adds them to the local store objects inventory
+            foreach (Item i in currentStore.localStoreInventory) //Test print on current stores stock
+                                                       {
+                Console.WriteLine("Back in main class");
+                                                           Console.WriteLine("ID is " + i.getId() + " Product Name is " + i.getName() + " Stock is " + i.getStock());
+                                                       }
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
             //Creates a new SQL connection "object"
@@ -365,28 +365,31 @@ namespace Assignment1
 
                 Console.WriteLine("{0,-10}  {1,-10} {2,-10}", "ProductID", "Product", "Quantity");
 
-                    foreach (var row in table.Select())
+                foreach (var row in table.Select()) 
+                    //Cross checks the Item ID's of the local store (gotten from getStoreInv) with items in the Item db
+                    //Then prints al matching items (local?)
                     {
-                    foreach (int i in storeItemsIntID)
+                    foreach (int i in storeItemsIntID) {
+                        Console.WriteLine("storeItemsIntID list: " +i);
+                        Console.WriteLine("And product is " + row["Name"]);
+                    }
+
+
+                        //UP TO HERE. PRINTING STORE ID
+
                         // So this prints the int id. Use it with getID for the currentSoteres item List
                         //foreach(Item j in currentStore.storeInventory)
 
-
-
                         {
-                        if (i == (int)row["ProductID"])
+                        //if (i == (int)row["ProductID"])
                             
-                            {
-                            int fuck = 0;
-                                Console.WriteLine(
-                                "{0,-10}  {1,-10} {2,-10}", row["ProductID"], row["Name"], fuck);
+                            //{
+                            //int fuck = 0;
+                            //    Console.WriteLine(
+                            //    "{0,-10}  {1,-10} {2,-10}", row["ProductID"], row["Name"], fuck);
                                 
-                            }
-                        foreach (Item shit in currentStore.storeInventory)
-                        {
-                            Console.WriteLine("YAYAYAYAYAYA");
-                            Console.WriteLine(currentStore.storeInventory);
-                        }
+                            //}
+
                         }
                     }
                 connection.Close();
@@ -432,10 +435,9 @@ namespace Assignment1
 
         }//End of productPrint
 
-        public static void purcharse(int prodInput, int storeSelect)
+        public static void purcharse(int prodInput, int storeSelect) //Writes the items purchased back to database 
         {
 
-            //THIS WILL WRITE BACK TO THE DATABASE WITH WHAT EVER THE ITEM PURCHASED WAS
 
             int newQuant = prodInput;
             Console.WriteLine("Enter quantity to purchase: ");
