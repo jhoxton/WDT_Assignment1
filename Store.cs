@@ -139,11 +139,11 @@ namespace Assignment1
                 connection.Close();
 
             }
-            foreach (int i in storeItemsIntID)
-            {
-                Console.WriteLine("storeItemsIntID list: " + i);
+            //foreach (int i in storeItemsIntID)
+            //{
+            //    Console.WriteLine("storeItemsIntID list: " + i);
              
-            }
+            //}
             return storeItemsIntID;
         }//END OF getStoreInv 
       
@@ -156,7 +156,7 @@ namespace Assignment1
 
             string storeRetrievedName = addingItem.listStore(itemInStoreID); //Gets item name from Item db
             addingItem.setName(storeRetrievedName);
-            Console.WriteLine(storeRetrievedName);
+            //Console.WriteLine("Item found is {0}",storeRetrievedName);
             //Console.WriteLine("storeRetrievedName is "+ storeRetrievedName);
             //Console.WriteLine("itemInStoreID is: " + itemInStoreID);
 
