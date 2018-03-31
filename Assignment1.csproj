@@ -53,6 +53,7 @@
     <Compile Include="Store.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="SQL Short Cuts.cs" />
+    <Compile Include="Customer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\MySqlTransaction.xml" />

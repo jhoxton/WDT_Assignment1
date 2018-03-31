@@ -270,17 +270,17 @@ namespace Assignment1
 
 
 
-        static void customerMenu()
+        public static void customerMenu()
         {
             Store currentStore = new Store(null, 0); //Empty store object
-
+            int prodInput = 0;
             int storeSelect = 0;
 
             storeSelect= currentStore.storePrint(storeSelect); //Selects store from database, via StoreID . Writes store info to local store object
 
             //Console.WriteLine("Store select is now " + currentStore.getName());
 
-            int prodInput = 0;
+
 
             try
             {
@@ -311,11 +311,12 @@ namespace Assignment1
 
                             //Uses the Store ID to get the inventory from the DB, then loops over the 
                             //Store objects Item List, adding each item(which loops over the DB inventory to add quantity to each item
-
-                            productPrint(currentStore, prodInput); //Populates the local stores List of items (localStoreInventory)
+ 
+                            customerProductPrint(prodInput, currentStore); //Populates the local stores List of items (localStoreInventory)
                             //Prints the available items then returns the users selected items and quantity for purchase
-                           
 
+                            Console.WriteLine("Prod input back in MENU is" + prodInput);
+                            //purcharse(prodInput, storeSelect, currentStore);
                             mainMenu();
 
 
@@ -337,8 +338,10 @@ namespace Assignment1
             }
         }//end of customerMenu
 
-        public static int productPrint(Store currentStore, int prodInput)
+     
+        public static int customerProductPrint(int prodInput, Store currentStore)
         {
+            
             List<int> storeItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
             //TODO Need to validate input to this List to avoid duplicates???
@@ -368,18 +371,21 @@ namespace Assignment1
 
                     //validation here
                     int userChoice = 0;
-                    if (int.TryParse(userinput, out userChoice)| userinput != "N" | userinput != "R")
+                    if (int.TryParse(userinput, out userChoice)| userinput != "N")
                     {
                         int storeSelect = currentStore.getId();
                         choice = userChoice;
 
-                        prodInput = userChoice;
-                        Console.WriteLine("Prod inout is " + prodInput);
-                            
+                        prodInput = choice;
+                        //passID = choice;
 
-                            purcharse(prodInput, storeSelect);
+                        Console.WriteLine("Prod input in PRODUCTPRINT is " + prodInput);
+                        purcharse(prodInput, storeSelect, currentStore);
+
+
 
                     }
+
                     else
                     {
                         Console.WriteLine("Please input number only between 1 and 4");
@@ -391,48 +397,80 @@ namespace Assignment1
                 Console.WriteLine("System Exception : " + e.Message);
             }
          
+            Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
 
             return prodInput;
 
 
         }//End of productPrint
 
-        public static void purcharse(int prodInput, int storeSelect) //Writes the items purchased back to database 
+        public static void purcharse(int prodInput, int storeSelect, Store currentStore) //Writes the items purchased back to database 
         {
-           
-          
-                    Console.WriteLine("Enter quantity to purchase: ");
+
+            bool canBuy = false;
+            Console.WriteLine("Prod input in PURCHASE  is " + prodInput);
+
+            string name =null;
+            int oldQuant = 0;
+            Console.WriteLine("Enter quantity to purchase: ");
   
             int newQuant = Convert.ToInt32(Console.ReadLine());
-                            //Console.WriteLine("Store ID is " + storeSelect);
-                            Console.WriteLine("Prod input is " + prodInput);
 
-           
-            Console.WriteLine("Quant is " + newQuant);
+            //Console.WriteLine("Store ID is " + storeSelect);
+            //Console.WriteLine("Prod input is " + prodInput);
+            //Console.WriteLine("Quant is " + newQuant);
 
-            var selectedID = prodInput;
-            var storeInvToAccess = storeSelect;
 
-            SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
+            foreach(Item purchasedItem in currentStore.localStoreInventory) {
+               
+                if(purchasedItem.getId() == prodInput) {
+                    name = purchasedItem.getName();
+                    oldQuant = purchasedItem.getStock();
+                    canBuy = true;
+                }
+            }
 
-            sqlOp.Open();
+            if(newQuant > oldQuant) {
+                Console.WriteLine("{0} doesn't have enough stock to fulfil the purchase", name);
+                canBuy = false;
 
-            var sqlText = @"UPDATE StoreInventory
+
+
+                mainMenu();
+            }
+            if(canBuy == true) {
+                var selectedProduct = prodInput;
+                var storeInvToAccess = storeSelect;
+
+                prodInput = 0;
+                storeSelect = 0;
+                currentStore = null;
+
+
+                SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
+
+                sqlOp.Open();
+
+                var sqlText = @"UPDATE StoreInventory
                 SET StockLevel = @quantity
                 WHERE ProductID = @inventoryID
                 AND StoreID = @storeID";
-            
-            SqlCommand dbCommand = new SqlCommand(sqlText, sqlOp);
-            dbCommand.Parameters.AddWithValue("quantity", newQuant);
-            dbCommand.Parameters.AddWithValue("inventoryID",selectedID );
-            dbCommand.Parameters.AddWithValue("storeID", storeSelect);
 
-            dbCommand.Connection = sqlOp;
+                SqlCommand dbCommand = new SqlCommand(sqlText, sqlOp);
+                dbCommand.Parameters.AddWithValue("quantity", newQuant);
+                dbCommand.Parameters.AddWithValue("inventoryID", selectedProduct);
+                dbCommand.Parameters.AddWithValue("storeID", storeSelect);
 
-                            dbCommand.ExecuteNonQuery();
+                dbCommand.Connection = sqlOp;
 
+                dbCommand.ExecuteNonQuery();
+
+
+            } else {
+                mainMenu();
+            }
            
-
+           
                       
 
 
@@ -526,6 +564,11 @@ namespace Assignment1
             return storeSelect;
         }//End of store print
 
+
+        public int validateRange(int target, int range) {
+            
+            return target;
+        }
 
     } //class
 
