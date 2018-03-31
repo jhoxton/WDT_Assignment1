@@ -17,8 +17,6 @@ namespace Assignment1
 
             //Console.WriteLine("Store select is now " + currentStore.getName());
 
-
-
             try
             {
                 int choice = 0;
@@ -46,9 +44,6 @@ namespace Assignment1
                         case 1:
                             choice = 1;
 
-                            //Uses the Store ID to get the inventory from the DB, then loops over the 
-                            //Store objects Item List, adding each item(which loops over the DB inventory to add quantity to each item
-
                             customerProductPrint(prodInput, currentStore); //Populates the local stores List of items (localStoreInventory)
                             //Prints the available items then returns the users selected items and quantity for purchase
 
@@ -58,10 +53,6 @@ namespace Assignment1
                         case 2:
                             choice = 2;
                             return;
-
-
-
-                      
                         default:
                             break;
                     } //End Switch

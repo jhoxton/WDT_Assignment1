@@ -20,7 +20,7 @@ namespace Assignment1
             mainMenu();           
         }
 
-        public static void connection()
+        public static void connectionTest()
         {
             Console.WriteLine("Connecting to database");
 
@@ -104,19 +104,22 @@ namespace Assignment1
                     {
                         case 1:
                             choice = 1;
-                            ownerMenu();
+                            Owner.ownerMenu();
+
+                            //ownerMenu();
                             break;
                         case 2:
                             choice = 2;
-                            Franchise franchise = new Franchise();
+                            //Franchise franchise = new Franchise();
                             Franchise.franchiseMenu();
+                            //franchise
 
                             break;
                         case 3:
                             choice = 3;
-                            Customer customer = new Customer();
+                            //Customer customer = new Customer();
                             Customer.customerMenu();
-                            customer = null;
+                            //customer = null;
 
                             //customerMenu();
                             break;
@@ -138,66 +141,66 @@ namespace Assignment1
 
         } // end of mainMenu
 
-        static void ownerMenu()
-        {
-            try
-            {
+        //static void ownerMenu()
+        //{
+        //    try
+        //    {
 
-                int choice = 0;
-                while (true)
-                {
-                    Console.WriteLine("Welcome to Marvelous Magic(Owner)\n==============");
-                    Console.WriteLine("1. Display All Stock Requests");
-                    Console.WriteLine("2. Display Owner Inventory ");
-                    Console.WriteLine("3. Reset Inventory Item Stock");
-                    Console.WriteLine("4. Return to main menu");
+        //        int choice = 0;
+        //        while (true)
+        //        {
+        //            Console.WriteLine("Welcome to Marvelous Magic(Owner)\n==============");
+        //            Console.WriteLine("1. Display All Stock Requests");
+        //            Console.WriteLine("2. Display Owner Inventory ");
+        //            Console.WriteLine("3. Reset Inventory Item Stock");
+        //            Console.WriteLine("4. Return to main menu");
 
-                    string userinput = Console.ReadLine();
+        //            string userinput = Console.ReadLine();
 
-                    //validation here
-                    int userChoice = 0;
+        //            //validation here
+        //            int userChoice = 0;
 
-                    if (int.TryParse(userinput, out userChoice))
-                    {
-                        choice = userChoice;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Please input number only between 1 and 4");
-                        choice = 0;
-                    }
-                    switch (choice)
-                    {
-                        case 1:
-                            choice = 1;
-                            //TODO
-                            break;
-                        case 2:
-                            choice = 2;
-                            //TODO
-                            break;
-                        case 3:
-                            choice = 3;
-                            //TODO
-                            break;
-                        case 4:
-                            mainMenu();
-                            break;
-                        default:
-                            break;
-                    } //End Switch
-                } // end of while
-
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("System Exception : " + e.Message);
-            }
+        //            if (int.TryParse(userinput, out userChoice))
+        //            {
+        //                choice = userChoice;
+        //            }
+        //            else
+        //            {
+        //                Console.WriteLine("Please input number only between 1 and 4");
+        //                choice = 0;
+        //            }
+        //            switch (choice)
+        //            {
+        //                case 1:
+        //                    choice = 1;
+        //                    //TODO
+        //                    break;
+        //                case 2:
+        //                    choice = 2;
+        //                    //TODO
+        //                    break;
+        //                case 3:
+        //                    choice = 3;
+        //                    //TODO
+        //                    break;
+        //                case 4:
+        //                    mainMenu();
+        //                    break;
+        //                default:
+        //                    break;
+        //            } //End Switch
+        //        } // end of while
 
 
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("System Exception : " + e.Message);
+        //    }
 
-        } // end of ownerMenu
+
+
+        //} // end of ownerMenu
 
         //public static void franchiseMenu()
         ////Prompt for Store ID here first
@@ -571,10 +574,6 @@ namespace Assignment1
         //}//End of store print
 
 
-        public int validateRange(int target, int range) {
-            
-            return target;
-        }
 
     } //class
 
