@@ -108,7 +108,9 @@ namespace Assignment1
                             break;
                         case 2:
                             choice = 2;
-                            franchiseMenu();
+                            Franchise franchise = new Franchise();
+                            Franchise.franchiseMenu();
+
                             break;
                         case 3:
                             choice = 3;
@@ -197,80 +199,80 @@ namespace Assignment1
 
         } // end of ownerMenu
 
-        public static void franchiseMenu()
-        //Prompt for Store ID here first
-        {
-            //List<Item> storeInventory = new List<Item>();
+        //public static void franchiseMenu()
+        ////Prompt for Store ID here first
+        //{
+        //    //List<Item> storeInventory = new List<Item>();
 
-            //Item test = new Item(null,0,0);
+        //    //Item test = new Item(null,0,0);
 
-            //Store currentStore = new Store(null, 0);
+        //    //Store currentStore = new Store(null, 0);
 
-            //currentStore.storeInventory.Add(test);
+        //    //currentStore.storeInventory.Add(test);
 
 
 
-            //foreach (KeyValuePair<int, int> item in storeInventory)
-            //{
-            //    Console.WriteLine("Key: {0}, Value: {1}", item.Key, item.Value);
-            //}
+        //    //foreach (KeyValuePair<int, int> item in storeInventory)
+        //    //{
+        //    //    Console.WriteLine("Key: {0}, Value: {1}", item.Key, item.Value);
+        //    //}
           
 
-            try
-            {
-                int choice = 0;
-                while (true)
-                {
-                    //Console.WriteLine("Welcome to Marvelous Magic(Franchise Holder - " + currentStore.getName() +  ")\n ============== ");
-                    Console.WriteLine("1. Display Inventory");
-                    Console.WriteLine("2. Stock Request(Threshold)");
-                    Console.WriteLine("3. Add New Inventory Item");
-                    Console.WriteLine("4. Return to main menu");
+        //    try
+        //    {
+        //        int choice = 0;
+        //        while (true)
+        //        {
+        //            //Console.WriteLine("Welcome to Marvelous Magic(Franchise Holder - " + currentStore.getName() +  ")\n ============== ");
+        //            Console.WriteLine("1. Display Inventory");
+        //            Console.WriteLine("2. Stock Request(Threshold)");
+        //            Console.WriteLine("3. Add New Inventory Item");
+        //            Console.WriteLine("4. Return to main menu");
 
-                    string userinput = Console.ReadLine();
+        //            string userinput = Console.ReadLine();
 
-                    //validation here
-                    int userChoice = 0;
-                    if (int.TryParse(userinput, out userChoice))
-                    {
-                        choice = userChoice;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Please input number only between 1 and 4");
-                        choice = 0;
-                    }
+        //            //validation here
+        //            int userChoice = 0;
+        //            if (int.TryParse(userinput, out userChoice))
+        //            {
+        //                choice = userChoice;
+        //            }
+        //            else
+        //            {
+        //                Console.WriteLine("Please input number only between 1 and 4");
+        //                choice = 0;
+        //            }
 
-                    switch (choice)
-                    {
-                        case 1:
-                            choice = 1;
+        //            switch (choice)
+        //            {
+        //                case 1:
+        //                    choice = 1;
                           
-                            break;
-                        case 2:
-                            choice = 2;
+        //                    break;
+        //                case 2:
+        //                    choice = 2;
                           
-                            //TODO
-                            break;
-                        case 3:
-                            choice = 3;
-                            //productPrint();
-                            //TODO
-                            break;
-                        case 4:
-                            mainMenu();
-                            break;
-                        default:
-                            break;
-                    } //End Switch
-                } // end of while
+        //                    //TODO
+        //                    break;
+        //                case 3:
+        //                    choice = 3;
+        //                    //productPrint();
+        //                    //TODO
+        //                    break;
+        //                case 4:
+        //                    mainMenu();
+        //                    break;
+        //                default:
+        //                    break;
+        //            } //End Switch
+        //        } // end of while
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("System Exception : " + e.Message);
-            }
-        }//end of franchiseMenu
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("System Exception : " + e.Message);
+        //    }
+        //}//end of franchiseMenu
 
 
 

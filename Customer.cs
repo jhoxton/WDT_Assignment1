@@ -24,9 +24,9 @@ namespace Assignment1
                 int choice = 0;
                 while (true)
                 {
-                    Console.WriteLine("Welcome to Marvelous Magic(Retail)\n==============");
+                    Console.WriteLine("Welcome to Marvelous Magic(Retail - " + currentStore.getName() + ")\n ============== ");
                     Console.WriteLine("1. Display Products");
-                    Console.WriteLine("4. Return to main menu");
+                    Console.WriteLine("2. Return to main menu");
 
                     string userinput = Console.ReadLine();
 
@@ -37,7 +37,7 @@ namespace Assignment1
                     }
                     else
                     {
-                        Console.WriteLine("Please input number only between 1 and 4");
+                        Console.WriteLine("Please input number 1 or 2");
                         choice = 0;
                     }
 
@@ -54,16 +54,14 @@ namespace Assignment1
 
                             //Console.WriteLine("Prod input back in MENU is" + prodInput);
                             //purcharse(prodInput, storeSelect, currentStore);
-                            //return;
-
-
-
-
-                            break;
-
-                        case 4:
                             return;
-                            //break;
+                        case 2:
+                            choice = 2;
+                            return;
+
+
+
+                      
                         default:
                             break;
                     } //End Switch
@@ -77,7 +75,7 @@ namespace Assignment1
         }//end of customerMenu
 
 
-        public static int customerProductPrint(int prodInput, Store currentStore)
+        public static void customerProductPrint(int prodInput, Store currentStore)
         {
 
             List<int> storeItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
@@ -120,6 +118,8 @@ namespace Assignment1
 
                         //Console.WriteLine("Prod input in PRODUCTPRINT is " + prodInput);
                         purcharse(prodInput, storeSelect, currentStore);
+                        //return prodInput;
+                        return;
 
 
 
@@ -140,7 +140,7 @@ namespace Assignment1
 
             //Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
 
-            return prodInput;
+            //return prodInput;
 
 
         }//End of productPrint
@@ -219,6 +219,8 @@ namespace Assignment1
 
                     sqlOp.Close();
                     Console.WriteLine("Purchased {0} of {1}", newQuant, name);
+                    Console.WriteLine("\n======================\n");
+                    return;
 
                 }
             }
