@@ -9,8 +9,8 @@ namespace Assignment1
         public static void ownerMenu()
         {
             Store ownerInventoryStore = new Store(null, 0); //Empty store object
-            int prodInput = 0;
-            int storeSelect = 0;
+            //int prodInput = 0;
+            //int storeSelect = 0;
 
             //storeSelect = ownerInventory.storePrint(storeSelect);
 

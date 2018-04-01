@@ -14,6 +14,8 @@ namespace Assignment1
 
         public List<Item> localStoreInventory = new List<Item>();
 
+        public List<int> thresholdIDs = new List<int>(); 
+
         public string getName() {
             return name;
         }
@@ -81,6 +83,11 @@ namespace Assignment1
             return storeSelect;
         }//End of store print
 
+        public int rePopulateStore(int storeSelect) {
+           
+            return storeSelect;
+
+        }
 
         public List<int> getStoreInv(List<int> storeItemsIntID) //Gets the store innventory
         {
@@ -194,9 +201,6 @@ namespace Assignment1
 
                 foreach (var row in table.Select())
                 {
-
-                    //THE PROBLEM IS HERE WITH THE LOOP NEED TO REMOVE DUPLICATION SOMEHOW
-
 
                     int itemInStoreInv = (int)row["ProductID"];//This is the old one
                     int stockLevel = (int)row["StockLevel"];
