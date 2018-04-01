@@ -3,15 +3,16 @@ namespace Assignment1
 {
     public class StockRequest
     {
-        private int requestID;
+        static int requestID= 0;
         private int storeID;
         private int productID;
         private int quantity;
         private bool available;
 
+
         public StockRequest(int requestID, int storeID, int productID, int quantity, bool available)
         {
-            this.requestID = requestID;
+            //this.requestID = requestID;
             this.storeID = storeID;
             this.productID = productID;
             this.quantity = quantity;
@@ -23,5 +24,17 @@ namespace Assignment1
         public int ProductID { get => productID; set => productID = value; }
         public int Quantity { get => quantity; set => quantity = value; }
         public bool Available { get => available; set => available = value; }
+
+        //public int getRequestID()
+        //{
+        //    return requestID;
+        //}
+
+        //public void setRequestId(int requestID)
+        //{
+        //    requestID = requestID +1;
+        //}
     }
+
+
 }

@@ -12,6 +12,7 @@ namespace Assignment1
             Store currentStore = new Store(null, 0); //Empty store object
             //int prodInput = 0;
             int storeSelect = 0;
+            int threshold = 0;
 
             storeSelect = currentStore.storePrint(storeSelect);
 
@@ -48,15 +49,15 @@ namespace Assignment1
                             break;
                         case 2:
                             choice = 2;
-                            int threshold = 0;
+                            //int threshold = 0;
                             //List<int> storeItemsIntID = new List<int>();
 
                             //currentStore.getStoreInv(storeItemsIntID);
                             setThreshold(threshold, currentStore);
 
                             //StockRequest request = new StockRequest(0,0,0,0,true);
-
-                            makeStockReguest(currentStore, threshold);
+                            //Console.WriteLine("THRESHOLD IS " + threshold);
+                            //makeStockReguest(currentStore, threshold);
 
                             //TODO
                             break;
@@ -116,11 +117,12 @@ namespace Assignment1
         }//End of productPrint
 
 
-        public static int setThreshold(int threshold, Store currentStore)
+        public static void setThreshold(int threshold, Store currentStore)
         {
 
             List<int> storeItemsIntID = new List<int>();
             currentStore.getStoreInv(storeItemsIntID);
+            StockRequest request = new StockRequest(0, 0, 0, 0, true);
 
 
             //foreach(Item i in currentStore.localStoreInventory) {
@@ -140,7 +142,8 @@ namespace Assignment1
 
             //Console.WriteLine("restockThreshold is "+ restockThreshold);
             //Console.WriteLine("choice is" + choice);
-            foreach (Item i in currentStore.localStoreInventory)
+
+            while(stockFull == false) foreach (Item i in currentStore.localStoreInventory)
             {
                 //Console.WriteLine(i.getId());//Getting item ID's. If they are higher than userinput, ignore, if lower add to currentStore.thresholdIDs
                 if (i.getStock() <= restockThreshold)
@@ -161,11 +164,24 @@ namespace Assignment1
             if (stockFull == true)
             {
 
+                Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
+                foreach (Item itemPrint in currentStore.localStoreInventory)
+                {
+                    foreach (int idPrint in currentStore.thresholdIDs)
+                    {
+                        if (idPrint == itemPrint.getId())
+                        {
+                            Console.WriteLine("{0,-5}  {1,-22} {2,-30}", itemPrint.getId(), itemPrint.getName(), itemPrint.getStock());
 
+                        }
+                    }
+                }
+                //NEED TO WRITE TO THE REQUEST ITEM HERE?
 
+                request.Quantity = restockThreshold;
+                Console.WriteLine("1ST Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
 
-                return threshold;
-
+                makeStockReguest(request, currentStore);
             }
             else
             {
@@ -174,47 +190,68 @@ namespace Assignment1
             }
 
 
-
-
-
-
-            return threshold;
-
         }
-        public static void makeStockReguest(Store currentStore, int threshold)
+        public static StockRequest makeStockReguest(StockRequest request, Store currentStore)
         {
-            Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
-            foreach (Item itemPrint in currentStore.localStoreInventory)
-            {
-                foreach (int idPrint in currentStore.thresholdIDs)
-                {
-                    if (idPrint == itemPrint.getId())
-                    {
+           
+            //Item itemToRequest = new Item(null, 0, 0);
 
+            //Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
+            //foreach (Item itemPrint in currentStore.localStoreInventory)
+            //{
+                //foreach (int idPrint in currentStore.thresholdIDs)
+                //{
+                //    if (idPrint == itemPrint.getId())
+                //    {
+                //        Console.WriteLine("{0,-5}  {1,-22} {2,-30}", itemPrint.getId(), itemPrint.getName(), itemPrint.getStock());
 
+                //    }
+                //}
 
-                        Console.WriteLine("{0,-5}  {1,-22} {2,-30}", itemPrint.getId(), itemPrint.getName(), itemPrint.getStock());
-
-
-
-
-                    }
-                }
-
-            }
+            //}
 
             Console.WriteLine();
             Console.WriteLine("Enter request to process: ");
+
             string input = Console.ReadLine();
+
             int requestToProcess = 0;
             int choice;
+
 
             if (int.TryParse(input, out choice))
             {
                 requestToProcess = choice;
             }
-            Console.WriteLine("Item to process is" + requestToProcess);
-            Console.WriteLine("Quanity is" + threshold);
+
+            //request.setRequestId(requestID);
+
+            //request.setRequestId(request.getRequestID());
+
+            request.RequestID = request.RequestID + 1;
+            request.StoreID = currentStore.getId();
+            request.ProductID = requestToProcess;
+
+
+
+            Console.WriteLine("2nd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
+
+            //StockRequest request = new StockRequest(1,currentStore.getId(),requestToProcess,threshold,true);
+
+
+            //foreach(Item loopItem in currentStore.localStoreInventory) {
+            //    if(requestToProcess == loopItem.getId()) {
+            //        itemToRequest.setId(loopItem.getId());
+            //        itemToRequest.setName(loopItem.getName());
+
+            //    }
+                
+            //}
+
+            //Console.WriteLine("Item to process is " + requestToProcess);
+            ////Console.WriteLine("Quanity is " + threshold);
+
+
             //StockRequest request = new StockRequest(0, 0, 0, 0, true);
 
 
@@ -223,53 +260,52 @@ namespace Assignment1
             using (var sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
             {
-                var stockRequestID = 1;
-                var item = requestToProcess;
-                var quanity = threshold;
-                var productID = 1;
-                //NEED TO FIX THIS?????????
-                //!!!!!!!!!!!!!!!!!!!!!!!?
+                var stockRequestID = request.RequestID;
+                var item = request.StoreID;
+                var quanity = request.Quantity;
+                var productID =request.ProductID;
 
-                sqlOp.Open();
+                //Console.WriteLine("3rd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
 
-                //var sqlText = @"UPDATE StoreInventory
-                //SET StockLevel = @quantity
-                //WHERE ProductID = @inventoryID
-                //AND StoreID = @storeID";
+               
 
-                var sqlText = @"INSERT INTO StockRequest
-                VALUES(@stockRequestID, @item, @quanity, @productID)";
 
-                //SET StockLevel = @item
-                //WHERE ProductID = @quanity
-                //AND StoreID = @storeID";
-                //INSERT INTO table_name(column1, column2, column3, ...)
-                //VALUES(value1, value2, value3, ...);
+                //sqlOp.Open();
 
-                SqlCommand dbCommand = new SqlCommand(sqlText, sqlOp);
-                dbCommand.Parameters.AddWithValue("stockRequestID", stockRequestID);
-                dbCommand.Parameters.AddWithValue("item", item);
-                dbCommand.Parameters.AddWithValue("quanity", quanity);
+                ////var sqlText = @"UPDATE StoreInventory
+                ////SET StockLevel = @quantity
+                ////WHERE ProductID = @inventoryID
+                ////AND StoreID = @storeID";
 
-                dbCommand.Parameters.AddWithValue("productID", productID);
+                //var sqlText = @"INSERT INTO StockRequest
+                //VALUES(@stockRequestID, @item, @quanity, @productID)";
 
-                dbCommand.Connection = sqlOp;
 
-                dbCommand.ExecuteNonQuery();
+                //SqlCommand dbCommand = new SqlCommand(sqlText, sqlOp);
+                //dbCommand.Parameters.AddWithValue("stockRequestID", stockRequestID);
+                //dbCommand.Parameters.AddWithValue("item", item);
+                //dbCommand.Parameters.AddWithValue("quanity", quanity);
 
-                sqlOp.Close();
+                //dbCommand.Parameters.AddWithValue("productID", productID);
 
-                Console.WriteLine("\n======================\n");
-                return;
+                //dbCommand.Connection = sqlOp;
+
+                //dbCommand.ExecuteNonQuery();
+
+                //sqlOp.Close();
+
+                //Console.WriteLine("\n======================\n");
+           
 
             }
-        }
+            return request; }
 
 
 
 
-        //Logic here for db call to make new stock request
+      
     }
+
 }
 
 
