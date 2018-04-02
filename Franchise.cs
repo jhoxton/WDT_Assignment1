@@ -6,6 +6,7 @@ namespace Assignment1
 {
     public class Franchise
     {
+       
         public static void franchiseMenu()
         //Prompt for Store ID here first
         {
@@ -13,6 +14,7 @@ namespace Assignment1
             //int prodInput = 0;
             int storeSelect = 0;
             int threshold = 0;
+
 
             storeSelect = currentStore.storePrint(storeSelect);
 
@@ -143,7 +145,8 @@ namespace Assignment1
             //Console.WriteLine("restockThreshold is "+ restockThreshold);
             //Console.WriteLine("choice is" + choice);
 
-            while(stockFull == false) foreach (Item i in currentStore.localStoreInventory)
+            while(stockFull == false) 
+                foreach (Item i in currentStore.localStoreInventory)
             {
                 //Console.WriteLine(i.getId());//Getting item ID's. If they are higher than userinput, ignore, if lower add to currentStore.thresholdIDs
                 if (i.getStock() <= restockThreshold)
@@ -178,8 +181,9 @@ namespace Assignment1
                 }
                 //NEED TO WRITE TO THE REQUEST ITEM HERE?
 
-                request.Quantity = restockThreshold;
-                Console.WriteLine("1ST Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
+                request.Quantity = restockThreshold;//Sets the threshold as the quantity of the stock request item
+
+                //Console.WriteLine("1ST Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
 
                 makeStockReguest(request, currentStore);
             }
@@ -228,76 +232,51 @@ namespace Assignment1
 
             //request.setRequestId(request.getRequestID());
 
+            //Sets the rest of the values of the stock request item
             request.RequestID = request.RequestID + 1;
             request.StoreID = currentStore.getId();
             request.ProductID = requestToProcess;
 
-
-
             Console.WriteLine("2nd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
 
-            //StockRequest request = new StockRequest(1,currentStore.getId(),requestToProcess,threshold,true);
+                var stockRequestID = request.RequestID + 1;
+                var storeID = request.StoreID;              
+                var productID =request.ProductID;
+                var quanity = request.Quantity;
 
+            var insertCmd = "SET IDENTITY_INSERT StockRequest ON INSERT INTO StockRequest (StockRequestID, StoreID, ProductID, Quantity) VALUES (@stockRequestIDval, @storeIDval, @productIDval, @quantityVal)";
 
-            //foreach(Item loopItem in currentStore.localStoreInventory) {
-            //    if(requestToProcess == loopItem.getId()) {
-            //        itemToRequest.setId(loopItem.getId());
-            //        itemToRequest.setName(loopItem.getName());
-
-            //    }
-                
-            //}
-
-            //Console.WriteLine("Item to process is " + requestToProcess);
-            ////Console.WriteLine("Quanity is " + threshold);
-
-
-            //StockRequest request = new StockRequest(0, 0, 0, 0, true);
-
-
-            //////
 
             using (var sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
             {
-                var stockRequestID = request.RequestID;
-                var item = request.StoreID;
-                var quanity = request.Quantity;
-                var productID =request.ProductID;
 
-                //Console.WriteLine("3rd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
+                using (SqlCommand comm = new SqlCommand())
+                {
+                    comm.Connection = sqlOp;
+                    comm.CommandText = insertCmd;
+                    //comm.CommandText = "SET IDENTITY_INSERT StockRequest ON";
+                    //sqlOp.Open();
+                    //comm.ExecuteNonQuery();
+                    comm.Parameters.AddWithValue("@stockRequestIDval", stockRequestID);
+                    comm.Parameters.AddWithValue("@storeIDval", storeID);
+                    comm.Parameters.AddWithValue("@productIDval", productID);
+                    comm.Parameters.AddWithValue("@quantityVal", quanity);
+                    //try
+                    //{
+                        sqlOp.Open();
+                        comm.ExecuteNonQuery();
+                    //}
+                    //catch (SqlException)
+                    //{
+                        //Console.WriteLine("Error");
+                    //}
 
-               
-
-
-                //sqlOp.Open();
-
-                ////var sqlText = @"UPDATE StoreInventory
-                ////SET StockLevel = @quantity
-                ////WHERE ProductID = @inventoryID
-                ////AND StoreID = @storeID";
-
-                //var sqlText = @"INSERT INTO StockRequest
-                //VALUES(@stockRequestID, @item, @quanity, @productID)";
-
-
-                //SqlCommand dbCommand = new SqlCommand(sqlText, sqlOp);
-                //dbCommand.Parameters.AddWithValue("stockRequestID", stockRequestID);
-                //dbCommand.Parameters.AddWithValue("item", item);
-                //dbCommand.Parameters.AddWithValue("quanity", quanity);
-
-                //dbCommand.Parameters.AddWithValue("productID", productID);
-
-                //dbCommand.Connection = sqlOp;
-
-                //dbCommand.ExecuteNonQuery();
-
-                //sqlOp.Close();
-
-                //Console.WriteLine("\n======================\n");
-           
-
+                }
+                sqlOp.Close();
+            
             }
+
             return request; }
 
 
