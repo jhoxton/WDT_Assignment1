@@ -93,8 +93,6 @@ namespace Assignment1
         {
             var selectedID = this.getId();
 
-            //WRITE TO ITEM OBJECTS TO STORE LIST HERE AND PASS IT BACK!!!
-
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
             //Creates a new SQL connection "object"
             {
@@ -117,15 +115,11 @@ namespace Assignment1
                 foreach (var row in table.Select())
                 {
 
-                    //THE PROBLEM IS HERE WITH THE LOOP NEED TO REMOVE DUPLICATION SOMEHOW
-                  
-
                     int itemInStoreInv = (int)row["ProductID"];//This is the old one
                     int stockLevel = (int)row["StockLevel"];
 
                     //Console.WriteLine("BEFORE MAKE ITEM ID is: " +itemInStoreInv +  " Stock is: " + stockLevel);
 
-                   
                     foreach(int i in storeItemsIntID) {
                         if(i == itemInStoreInv) {
                             //Dulpicate found
@@ -238,6 +232,6 @@ namespace Assignment1
 
             //}
             return storeItemsIntID;
-        }//END OF getStoreInv 
+        }//END OF getOwnerInv 
     }
 }

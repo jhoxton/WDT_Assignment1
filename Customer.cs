@@ -52,7 +52,8 @@ namespace Assignment1
                             return;
                         case 2:
                             choice = 2;
-                            return;
+                            MainClass.mainMenu();
+                            break;
                         default:
                             break;
                     } //End Switch

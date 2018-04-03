@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Assignment1
 {
@@ -51,22 +53,15 @@ namespace Assignment1
                             break;
                         case 2:
                             choice = 2;
-                            //int threshold = 0;
-                            //List<int> storeItemsIntID = new List<int>();
-
-                            //currentStore.getStoreInv(storeItemsIntID);
                             setThreshold(threshold, currentStore);
 
-                            //StockRequest request = new StockRequest(0,0,0,0,true);
-                            //Console.WriteLine("THRESHOLD IS " + threshold);
-                            //makeStockReguest(currentStore, threshold);
-
-                            //TODO
                             break;
                         case 3:
                             choice = 3;
-                            //productPrint();
-                            //TODO
+
+                            addNewItem(currentStore);
+                            //Get all Owner product IDs into a list, cross check against Franchise IDs and then remove any that are in both
+                            //Then print said list and allow user to select an ID, which makes a single item to add to Stores database
                             break;
                         case 4:
                             return;
@@ -82,6 +77,107 @@ namespace Assignment1
                 Console.WriteLine("System Exception : " + e.Message);
             }
         }//end of franchiseMenu
+
+        public static void addNewItem(Store currentStore)
+        {
+            
+            List<int> ownerItemsIntID = new List<int>(); //ID's of the owner ie all products
+            List<int> franchiseItemsIntID = new List<int>();//ID's of the current store that are in stock
+            List<int> unstockedItemsIntId = new List<int>();//ID's that are currently not in stock in the current store, to print
+
+            List<Item> itemsToPrint = new List<Item>();
+
+            currentStore.getStoreInv(franchiseItemsIntID);//YAY for modular reusable methods! Better check for artifacts though
+
+            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+            //Creates a new SQL connection "object"
+            {
+                connection.Open();
+
+                var sqlText = "select * from OwnerInventory";
+
+                SqlCommand dbCommand = new SqlCommand(sqlText, connection);
+                dbCommand.ExecuteNonQuery();
+
+                var table = new DataTable();
+                var adapter = new SqlDataAdapter(dbCommand);
+
+                adapter.Fill(table);
+
+                foreach (var row in table.Select())
+                {
+                    int itemInStoreInv = (int)row["ProductID"];
+                    int stockLevel = (int)row["StockLevel"];
+                    ownerItemsIntID.Add(itemInStoreInv);//Gets item ID's for Owner Stock to cross check
+
+                    Item addingItem = new Item(null, 0, 0);//Adds items to a new list to print items that the store does not have
+
+                    addingItem.setId(itemInStoreInv);
+                    addingItem.setStock(stockLevel);
+
+                    string storeRetrievedName = addingItem.listStore(itemInStoreInv); //Gets item name from Item db
+                    addingItem.setName(storeRetrievedName);
+                    //Console.WriteLine("Retrieved name is: "+  storeRetrievedName);
+                    itemsToPrint.Add(addingItem);
+
+                }
+
+                foreach(Item i in currentStore.localStoreInventory) {
+                    int storeID = i.getId();
+                    franchiseItemsIntID.Add(storeID);//Gets item ID's from store stock to cross check
+
+                }
+              
+
+                //makeItem(itemInStoreInv, stockLevel, storeItemsIntID); 
+                connection.Close();
+
+
+                //foreach(int i in ownerItemsIntID) {
+                //    Console.WriteLine("Owners items are " +i);
+                //}
+                //foreach (int i in franchiseItemsIntID)
+                //{
+                //    Console.WriteLine("Franchise items are " + i);
+                //}
+
+              
+                ownerItemsIntID.RemoveAll(l => franchiseItemsIntID.Contains(l));//Removers any duplicates in both lists from the Owner list (it has the important info)
+                List<int> itemsNotInStockIntID = ownerItemsIntID; //Makes a new list of item ID's not in store
+
+                //foreach (int i in itemsNotInStockIntID)
+                //{
+                //    Console.WriteLine("New items are " + i);
+                //}
+                Console.WriteLine("\nInventory");
+
+                Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock\n");
+                foreach(int i in itemsNotInStockIntID) {
+                    foreach(Item j in itemsToPrint) {
+                        if(i == j.getId()) {
+                            Console.WriteLine("{0,-5}  {1,-22} {2,-30}", j.getId(), j.getName(), j.getStock());
+                            //FIx this print here
+                        }
+                    }
+                }
+                Console.WriteLine();
+                Console.WriteLine ("Enter product to add: \n");
+
+
+
+
+
+ 
+
+
+            }
+        }//end of addNewItem
+
+
+        public static void newItemStockReguest() { //Makes a stock request of a single item
+            
+        }
+
         public static void franchiseProductPrint(Store currentStore)
         {
 
@@ -197,24 +293,7 @@ namespace Assignment1
         }
         public static StockRequest makeStockReguest(StockRequest request, Store currentStore)
         {
-           
-            //Item itemToRequest = new Item(null, 0, 0);
-
-            //Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
-            //foreach (Item itemPrint in currentStore.localStoreInventory)
-            //{
-                //foreach (int idPrint in currentStore.thresholdIDs)
-                //{
-                //    if (idPrint == itemPrint.getId())
-                //    {
-                //        Console.WriteLine("{0,-5}  {1,-22} {2,-30}", itemPrint.getId(), itemPrint.getName(), itemPrint.getStock());
-
-                //    }
-                //}
-
-            //}
-
-            Console.WriteLine();
+       Console.WriteLine();
             Console.WriteLine("Enter request to process: ");
 
             string input = Console.ReadLine();
@@ -237,7 +316,7 @@ namespace Assignment1
             request.StoreID = currentStore.getId();
             request.ProductID = requestToProcess;
 
-            Console.WriteLine("2nd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
+            //Console.WriteLine("2nd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
 
                 var stockRequestID = request.RequestID + 1;
                 var storeID = request.StoreID;              
@@ -277,13 +356,15 @@ namespace Assignment1
             
             }
 
-            return request; }
+            return request; 
+        }
 
 
 
-
+   
       
     }
+
 
 }
 
