@@ -85,7 +85,7 @@ namespace Assignment1
             List<int> franchiseItemsIntID = new List<int>();//ID's of the current store that are in stock
             List<int> unstockedItemsIntId = new List<int>();//ID's that are currently not in stock in the current store, to print
 
-            List<Item> itemsToPrint = new List<Item>();
+            List<Item> itemsToPrint = new List<Item>();//List of items to print
 
             currentStore.getStoreInv(franchiseItemsIntID);//YAY for modular reusable methods! Better check for artifacts though
 
@@ -162,25 +162,15 @@ namespace Assignment1
                 }
                 Console.WriteLine();
                 Console.WriteLine ("Enter product to add: \n");
+                StockRequest singleItemRequest = new StockRequest(0, 0, 0, 1, true); //Makes a new stock request item but with the quantity set to 1
+                singleItemRequest.Quantity = 1; //Being double sure here. TODO delete this
 
-
-
-
-
- 
-
-
+                makeStockReguest(singleItemRequest, currentStore);
             }
         }//end of addNewItem
 
-
-        public static void newItemStockReguest() { //Makes a stock request of a single item
-            
-        }
-
         public static void franchiseProductPrint(Store currentStore)
         {
-
             List<int> storeItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
             //TODO Need to validate input to this List to avoid duplicates???
@@ -204,13 +194,7 @@ namespace Assignment1
             Console.WriteLine();
             //franchiseProductPrint(currentStore);
             storeItemsIntID = null;
-            //TODO how to stop the store items list doubling up?
-
-
-            //Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
-
-            //return prodInput;
-
+ 
 
         }//End of productPrint
 
@@ -280,7 +264,7 @@ namespace Assignment1
                 request.Quantity = restockThreshold;//Sets the threshold as the quantity of the stock request item
 
                 //Console.WriteLine("1ST Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
-
+                Console.WriteLine("Enter request to process: ");
                 makeStockReguest(request, currentStore);
             }
             else
@@ -294,7 +278,7 @@ namespace Assignment1
         public static StockRequest makeStockReguest(StockRequest request, Store currentStore)
         {
        Console.WriteLine();
-            Console.WriteLine("Enter request to process: ");
+            //Console.WriteLine("Enter request to process: ");
 
             string input = Console.ReadLine();
 

@@ -3,7 +3,7 @@ namespace Assignment1
 {
     public class StockRequest
     {
-        static int requestID= 0;
+        static int requestID= requestID +1;
         private int storeID;
         private int productID;
         private int quantity;
