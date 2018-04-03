@@ -51,9 +51,8 @@ namespace Assignment1
                             //purcharse(prodInput, storeSelect, currentStore);
                             return;
                         case 2:
-                            choice = 2;
-                            MainClass.mainMenu();
-                            break;
+                            return;
+                         
                         default:
                             break;
                     } //End Switch
@@ -177,21 +176,12 @@ namespace Assignment1
             }
             if (canBuy == true)
             {
-
-
                 using (var sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
                 {
                     //Console.WriteLine("Bool worked");
                     var selectedProduct = prodInput;
                     var storeInvToAccess = storeSelect;
-
-                    //prodInput = 0;
-                    //storeSelect = 0;
-                    //currentStore = null;
-
-
-                    //SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
 
                     sqlOp.Open();
 
@@ -218,14 +208,9 @@ namespace Assignment1
             }
             else if (canBuy ==false)
             {
-                //mainMenu();
-                return;
+                customerMenu();
+                //return;
             }
-
-
-
-
-
         } //end of purcharse()
 
         //
