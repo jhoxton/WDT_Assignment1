@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace Assignment1
@@ -180,12 +181,49 @@ namespace Assignment1
             int requstStore;
             bool available;
 
-                                ownerInventoryStore.getOwnerInv(ownerItemsIntID);
-                                //shift this method to the start of class so it doesn't get callec a milliontimes! Same with franchise and customer
+            List<StockRequest> requestList = new List<StockRequest>(); //List to store then print all current stock requests locally
 
+                                  //shift this method to the start of class so it doesn't get callec a milliontimes! Same with franchise and customer
+                                ownerInventoryStore.getOwnerInv(ownerItemsIntID);
+
+            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+
+            {
+                connection.Open();
+                //Opens said "object"
+
+                var command = connection.CreateCommand();
+                //Creates a command
+                command.CommandText = "select * from StockRequest"; //Sets the text for the command
+
+                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
+                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+
+                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+
+                foreach (var row in table.Select())
+                {
+                   
+                    int requestID = (int)row["StockRequestID"];
+                    int storeID = (int)row["StoreID"];
+                    int productID = (int)row["ProductID"];
+                    int quantity = (int)row["Quantity"];
+
+                    StockRequest addingRequest = new StockRequest(requestID, storeID, productID, quantity, true);
+                    requestList.Add(addingRequest);
+
+
+                    //NEED TO FIX REQUEST ID
+
+                }
+                foreach(StockRequest test in requestList) {
+                    Console.WriteLine("Request being added is " + test.RequestID);
+                }
+            }
 
             //Get owner stock levels. Has this already been done?
-            //Get all requsts from db and print
+
+            //Get all requsts from db, make new stock request items, find the match name method and print
             //User input
             //Cross check requst quantity against relevent stock item (use input and item ID)
             //If input > ID, bool is true, call process method and remove requst from db

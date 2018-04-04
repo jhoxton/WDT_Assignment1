@@ -290,22 +290,21 @@ namespace Assignment1
             {
                 requestToProcess = choice;
             }
-
             //request.setRequestId(requestID);
 
             //request.setRequestId(request.getRequestID());
 
             //Sets the rest of the values of the stock request item
-            request.RequestID = request.RequestID + 1;
+            request.RequestID = 5;
             request.StoreID = currentStore.getId();
             request.ProductID = requestToProcess;
 
             //Console.WriteLine("2nd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
 
-                var stockRequestID = request.RequestID + 1;
-                var storeID = request.StoreID;              
-                var productID =request.ProductID;
-                var quanity = request.Quantity;
+            var stockRequestID = request.RequestID ;
+            var storeID = request.StoreID;
+            var productID = request.ProductID;
+            var quanity = request.Quantity;
 
             var insertCmd = "SET IDENTITY_INSERT StockRequest ON INSERT INTO StockRequest (StockRequestID, StoreID, ProductID, Quantity) VALUES (@stockRequestIDval, @storeIDval, @productIDval, @quantityVal)";
 
