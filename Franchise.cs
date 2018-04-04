@@ -308,7 +308,7 @@ namespace Assignment1
                 String retrievedID = cmd.ExecuteScalar().ToString();
 
                 int maxID = int.Parse(retrievedID);
-                maxID = maxID + 1;
+                maxID = maxID + 1; //For some reason the whole thing crashes if there are no other Stock Requests in the database!
                 //Console.WriteLine("Next stock request id should be " + maxID);
                 con.Close();
                 request.RequestID = maxID;

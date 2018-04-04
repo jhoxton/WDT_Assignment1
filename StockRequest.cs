@@ -57,11 +57,11 @@ namespace Assignment1
                     break;
                 case 3:
                     StoreID = 3;
-                    this. storeName = "East Melbourne";
+                    this.storeName = "East Melbourne";
                     break;
                 case 4:
                     StoreID = 4;
-                    this. storeName = "South Melbounre";
+                    this.storeName = "South Melbounre";
                     break;
                 case 5:
                     StoreID = 5;

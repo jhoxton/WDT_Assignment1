@@ -291,17 +291,37 @@ namespace Assignment1
 
 
         public static void processStockRequest(StockRequest selectedRequest) { //Assuming everything validated, process the db request
-            Console.WriteLine("Passed request was " + selectedRequest.RequestID);
-
+         
+           
             int stockRequestId = selectedRequest.RequestID;
             int storeId = selectedRequest.StoreID;
             int productId = selectedRequest.ProductID;
             int quantity = selectedRequest.Quantity;
 
 
-            Console.WriteLine("{0}, {1}, {2}, {3} ", stockRequestId, storeId,  productId, quantity);
-            //open StockRequest db again and clear stock request
+            SqlConnection connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"
+);
+
+            string sqlStatement = @"DELETE FROM StockRequest WHERE StockRequestID = @StockRequestID AND StoreID = @StoreID";
+
+            try
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand(sqlStatement, connection);
+                cmd.Parameters.AddWithValue("StockRequestID", stockRequestId);
+                cmd.Parameters.AddWithValue("StoreID",storeId);
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+
             //Call store db
+
             //Update store stock with the 3 passed ints
 
         }
