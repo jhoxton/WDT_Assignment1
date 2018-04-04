@@ -210,20 +210,46 @@ namespace Assignment1
                     int quantity = (int)row["Quantity"];
 
                     StockRequest addingRequest = new StockRequest(requestID, storeID, productID, quantity, true);
+
+                    foreach (Item ownerItem in ownerInventoryStore.localStoreInventory) {
+
+                        if(addingRequest.ProductID == ownerItem.getId()) {
+                           
+                            if (ownerItem.getStock() < quantity)
+                            {
+                                addingRequest.Available = false;
+                                Console.WriteLine("< request ID is " + addingRequest.RequestID);
+                                Console.WriteLine("< request qunat is " + addingRequest.Quantity);
+                                Console.WriteLine("< owner quant is " + ownerItem.getStock());
+                                Console.WriteLine("<=============>");
+                            }
+                            Console.WriteLine("Request ID is " + addingRequest.RequestID);
+                            Console.WriteLine("Request qunat is " + addingRequest.Quantity);
+                            Console.WriteLine("Owner quant is " + ownerItem.getStock());
+                            Console.WriteLine("=============");
+                        }
+                    }
+
                     requestList.Add(addingRequest);
 
-
-                    //NEED TO FIX REQUEST ID
-
                 }
-                foreach(StockRequest test in requestList) {
-                    Console.WriteLine("Request being added is " + test.RequestID);
-                }
+
+
+
+                //GET STORE NAME AND PRODUCT NAME HERE
+                //ALSO GET OWNERS CURRENT STOCK
+                //Console.WriteLine("{0,-5}  {1,-22} {2,-30} {3,-35} {4,-40} {5,-48} ", "Request ID", "Store", "Product", "Quantity", "Current Stock", " Stock Availability");
+ 
+                //foreach(StockRequest test in requestList) {
+                //    Console.WriteLine("{0,-5}  {1,-22} {2,-30} {3,-35} {4,-40} {5,-48}",test.RequestID, test.StoreID, test.ProductID, test.Quantity, 0, test.Available);
+                //}
+                connection.Close();
             }
 
             //Get owner stock levels. Has this already been done?
 
             //Get all requsts from db, make new stock request items, find the match name method and print
+
             //User input
             //Cross check requst quantity against relevent stock item (use input and item ID)
             //If input > ID, bool is true, call process method and remove requst from db

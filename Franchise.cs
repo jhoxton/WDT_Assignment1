@@ -290,18 +290,41 @@ namespace Assignment1
             {
                 requestToProcess = choice;
             }
-            //request.setRequestId(requestID);
+  
 
-            //request.setRequestId(request.getRequestID());
+            using (var con = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+                //Sets the new requests ID via a database call to get the max current ID
+            {
+                con.Open();
+                //Opens said "object"
 
-            //Sets the rest of the values of the stock request item
-            request.RequestID = 5;
+                SqlCommand cmd = new SqlCommand();
+
+
+                String query = "select max(StockRequestID) from StockRequest;";
+                cmd.Connection = con;
+                cmd.CommandText = query;
+                String retrievedID = cmd.ExecuteScalar().ToString();
+
+                int maxID = int.Parse(retrievedID);
+                maxID = maxID + 1;
+                //Console.WriteLine("Next stock request id should be " + maxID);
+                con.Close();
+                request.RequestID = maxID;
+
+            }
+
+
+
+            //Console.WriteLine("Request ID is now " + request.RequestID);
+
+
             request.StoreID = currentStore.getId();
             request.ProductID = requestToProcess;
 
             //Console.WriteLine("2nd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
 
-            var stockRequestID = request.RequestID ;
+            var stockRequestID = request.RequestID;
             var storeID = request.StoreID;
             var productID = request.ProductID;
             var quanity = request.Quantity;

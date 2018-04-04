@@ -72,33 +72,33 @@ namespace Assignment1
 
         }
 
-        public static void getRequestID() {
-            using (var con = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
+        //public static void setRequestID() {
+            //using (var con = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
-            {
-                con.Open();
-                //Opens said "object"
+            //{
+            //    con.Open();
+            //    //Opens said "object"
 
-                SqlCommand cmd = new SqlCommand();
+            //    SqlCommand cmd = new SqlCommand();
 
 
-                String query = "select max(StockRequestID) from StockRequest;";
-                cmd.Connection = con;
-                cmd.CommandText = query;
-                String x = cmd.ExecuteScalar().ToString();
-                Console.WriteLine("MAX SHOULD BE " + x);
+            //    String query = "select max(StockRequestID) from StockRequest;";
+            //    cmd.Connection = con;
+            //    cmd.CommandText = query;
+            //    String retrievedID = cmd.ExecuteScalar().ToString();
 
-                //YEEEESSSSS!!!
-               
-              
+            //    int maxID = int.Parse(retrievedID) +1;
 
-            }
+            //    Console.WriteLine("Next stock request id should be" + maxID);
+            //    con.Close();
 
-            }
+            //}
+
+            //}
 
         public static void mainMenu()  //The main menu method
         {
-            getRequestID();
+
             try
             {
                 int choice = 0;
