@@ -11,50 +11,21 @@ namespace Assignment1
         private int productID;
         private int quantity;
         private bool available;
+        private string productName;
+        private string storeName;
 
 
-        public StockRequest(int requestID, int storeID, int productID, int quantity, bool available)
+        public StockRequest(int requestID, int storeID, int productID, int quantity, bool available, string productName, string storeName)
         {
             this.requestID = requestID;
             this.storeID = storeID;
             this.productID = productID;
             this.quantity = quantity;
             this.available = available;
+            this.ProductName = productName;
+            this.StoreName = storeName;
         }
 
-
-        //public int getrequestID()
-        //{
-        //    return requestID;
-        //}
-
-
-        //public int setRequestID(int requestID) {
-        //    //this.requestID = requestID;
-        //using (var con = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-
-        //{
-        //    con.Open();
-        //    //Opens said "object"
-
-        //    SqlCommand cmd = new SqlCommand();
-
-
-        //    String query = "select max(StockRequestID) from StockRequest;";
-        //    cmd.Connection = con;
-        //    cmd.CommandText = query;
-        //    String retrievedID = cmd.ExecuteScalar().ToString();
-
-        //    int maxID = int.Parse(retrievedID);
-        //        maxID = maxID + 1;
-           
-        //    con.Close();
-        //        requestID = maxID;
-        //        Console.WriteLine("Next stock request id should be " + requestID);
-
-        //}
-        //    //return requestID;
-        //}
 
         public int RequestID { get => requestID; set => requestID = value; }
         public int StoreID { get => storeID; set => storeID = value; }
@@ -62,16 +33,48 @@ namespace Assignment1
         public int Quantity { get => quantity; set => quantity = value; }
         public bool Available { get => available; set => available = value; }
 
-        //public int getRequestID()
-        //{
-        //    return requestID;
+        public string ProductName { get => productName; set => productName = value; }
+        public string StoreName { get => storeName; set => storeName = value; }
+
+        //public string getStoreName(String name){
+        //    return storeName;
         //}
 
-        //public void setRequestId(int requestID)
-        //{
-        //    requestID = requestID +1;
-        //}
+
+        public void findStoreName()//This is a cheap and dirty method to get store names without having to call the db again
+        {
+            switch (this.StoreID)
+            {
+                case 1:
+                    StoreID = 1;
+                    this.storeName = "Melbourne CBD";
+                    //return storeName;
+                    break;
+                case 2:
+                    StoreID = 2;
+                    this.storeName = "North Melbourne";
+                    //return storeName;
+                    break;
+                case 3:
+                    StoreID = 3;
+                    this. storeName = "East Melbourne";
+                    break;
+                case 4:
+                    StoreID = 4;
+                    this. storeName = "South Melbounre";
+                    break;
+                case 5:
+                    StoreID = 5;
+                    this.storeName = "West Melbourne";
+                    //return storeName;
+                    break;
+                default:
+                    break;
+            } //switch
+            //return storeName;
+        }
     }
+
 
 
 }

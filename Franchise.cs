@@ -162,7 +162,7 @@ namespace Assignment1
                 }
                 Console.WriteLine();
                 Console.WriteLine ("Enter product to add: \n");
-                StockRequest singleItemRequest = new StockRequest(0, 0, 0, 1, true); //Makes a new stock request item but with the quantity set to 1
+                StockRequest singleItemRequest = new StockRequest(0, 0, 0, 1, true,null,null); //Makes a new stock request item but with the quantity set to 1
                 singleItemRequest.Quantity = 1; //Being double sure here. TODO delete this
 
                 makeStockReguest(singleItemRequest, currentStore);
@@ -204,7 +204,7 @@ namespace Assignment1
 
             List<int> storeItemsIntID = new List<int>();
             currentStore.getStoreInv(storeItemsIntID);
-            StockRequest request = new StockRequest(0, 0, 0, 0, true);
+            StockRequest request = new StockRequest(0, 0, 0, 0, true,null,null);
 
 
             //foreach(Item i in currentStore.localStoreInventory) {
