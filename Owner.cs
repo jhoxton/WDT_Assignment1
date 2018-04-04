@@ -10,15 +10,9 @@ namespace Assignment1
         public static void ownerMenu()
         {
             Store ownerInventoryStore = new Store(null, 0); //Empty store object
-            //int prodInput = 0;
-            //int storeSelect = 0;
-
-            //storeSelect = ownerInventory.storePrint(storeSelect);
-
 
             try
             {
-
                 int choice = 0;
                 while (true)
                 {
@@ -46,7 +40,7 @@ namespace Assignment1
                     {
                         case 1:
                             choice = 1;
-                            //TODO
+                            displayStockRequests(ownerInventoryStore);
                             break;
                         case 2:
                             choice = 2;
@@ -61,17 +55,13 @@ namespace Assignment1
 
                         default:
                             break;
-                    } //End Switch
-                } // end of while
-
-
+                    } //switch
+                } // while
             }
             catch (Exception e)
             {
                 Console.WriteLine("System Exception : " + e.Message);
             }
-
- 
 
         } // end of ownerMenu
         public static void resetItemStock(int resetID, string resetName) //
@@ -162,7 +152,6 @@ namespace Assignment1
 
         public static void ownerProductPrint(Store ownerInventoryStore)
         {
-
             List<int> ownerItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
             //TODO Need to validate input to this List to avoid duplicates???
@@ -173,28 +162,39 @@ namespace Assignment1
 
             Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
 
-            //loop over current store items here
-
             foreach (Item i in ownerInventoryStore.localStoreInventory) //Test print on current stores stock
             {
-
                 Console.WriteLine("{0,-5}  {1,-22} {2,-30}", i.getId(), i.getName(), i.getStock());
-
             }
 
             Console.WriteLine();
 
-
-
             //Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
-
-            //return prodInput;
-
-
         }//End of productPrint
 
-        public static void displayStockRequests() {
-            
+        public static void displayStockRequests(Store ownerInventoryStore) { //Loops & prints all stock requests from the db, prompts the owner to process one. 
+            List<int> ownerItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
+
+            int requestItem;
+            int requestQuant;
+            int requstStore;
+            bool available;
+
+                                ownerInventoryStore.getOwnerInv(ownerItemsIntID);
+                                //shift this method to the start of class so it doesn't get callec a milliontimes! Same with franchise and customer
+
+
+            //Get owner stock levels. Has this already been done?
+            //Get all requsts from db and print
+            //User input
+            //Cross check requst quantity against relevent stock item (use input and item ID)
+            //If input > ID, bool is true, call process method and remove requst from db
+
+        }
+
+        public static void processStockRequest(int requestItem, int requestQuant, int requstStore) {
+            //Call store db
+            //Update stock with the 3 passed ints
         }
     }
 }
