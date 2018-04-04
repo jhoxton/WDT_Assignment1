@@ -207,7 +207,7 @@ namespace Assignment1
                     int quantity = (int)row["Quantity"];
 
                     StockRequest addingRequest = new StockRequest(requestID, storeID, productID, quantity, true, null, null);
-
+                    addingRequest.Quantity = quantity;
                     foreach (Item ownerItem in ownerInventoryStore.localStoreInventory)
                     {
 
@@ -299,15 +299,14 @@ namespace Assignment1
             int quantity = selectedRequest.Quantity;
 
 
-            SqlConnection connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"
-);
+            SqlConnection sqlOps = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
 
             string sqlStatement = @"DELETE FROM StockRequest WHERE StockRequestID = @StockRequestID AND StoreID = @StoreID";
 
             try
             {
-                connection.Open();
-                SqlCommand cmd = new SqlCommand(sqlStatement, connection);
+                sqlOps.Open();
+                SqlCommand cmd = new SqlCommand(sqlStatement, sqlOps);
                 cmd.Parameters.AddWithValue("StockRequestID", stockRequestId);
                 cmd.Parameters.AddWithValue("StoreID",storeId);
                 cmd.CommandType = CommandType.Text;
@@ -316,9 +315,36 @@ namespace Assignment1
             }
             finally
             {
-                connection.Close();
+                sqlOps.Close();
             }
 
+            try {
+                sqlOps.Open();
+                //NEED TO FIND A WAY TO CHECK FOR DUPLICATE KEYS (ie Products the store already has some of)
+                //Probably just use an if/else
+
+                var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
+
+                //"SET IDENTITY_INSERT StoreInventory ON INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
+
+                //@"UPDATE StoreInventory
+                //SET StockLevel = @quantity
+                //WHERE ProductID = @inventoryID
+                //AND StoreID = @storeID";
+                SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                dbCommand.Parameters.AddWithValue("quantity", quantity);
+                dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                dbCommand.Parameters.AddWithValue("storeID", storeId);
+
+                dbCommand.Connection = sqlOps;
+
+                dbCommand.ExecuteNonQuery();
+
+
+            }
+            finally {
+                sqlOps.Close();
+            }
 
             //Call store db
 
