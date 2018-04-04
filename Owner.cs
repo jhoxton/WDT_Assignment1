@@ -268,7 +268,12 @@ namespace Assignment1
                     foreach (StockRequest selectedRequest in requestList) {
                         if(choice == selectedRequest.RequestID)
                         {
-                            processStockRequest(selectedRequest);
+                            if(selectedRequest.Available == true) {
+                                processStockRequest(selectedRequest);
+                            } else {
+                                Console.WriteLine("Not enough stock in owner inventory to process stock request");
+                            }
+                          
                         }
                     }
 
@@ -320,26 +325,55 @@ namespace Assignment1
 
             try {
                 sqlOps.Open();
-                //NEED TO FIND A WAY TO CHECK FOR DUPLICATE KEYS (ie Products the store already has some of)
-                //Probably just use an if/else
+ 
+                /* NEED TO FIND A WAY TO CHECK FOR DUPLICATE KEYS (ie Products the store already has some of)
+                 * if (current Primary key(Product ID I think?) is found, run an Update
+                 * 
+                 * 
+                 */
+                var sqlText1 = "select * from StoreInventory where StoreID = @find";
+                //int checkID = 0;
+                SqlCommand dbCommCheck = new SqlCommand(sqlText1, sqlOps);
+                dbCommCheck.Parameters.AddWithValue("find", storeId);
+                Console.WriteLine("Check id is " + storeId);
+                if (storeId != 0)
+                {
+                    Console.WriteLine("ddsfdshfjksa");
 
-                var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
+                    var sqlText = @"UPDATE StoreInventory
+                SET StockLevel = @quantity
+                WHERE ProductID = @inventoryID
+                AND StoreID = @storeID";
 
-                //"SET IDENTITY_INSERT StoreInventory ON INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
+                     
 
-                //@"UPDATE StoreInventory
-                //SET StockLevel = @quantity
-                //WHERE ProductID = @inventoryID
-                //AND StoreID = @storeID";
-                SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
-                dbCommand.Parameters.AddWithValue("quantity", quantity);
-                dbCommand.Parameters.AddWithValue("inventoryID", productId);
-                dbCommand.Parameters.AddWithValue("storeID", storeId);
+                    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                    dbCommand.Parameters.AddWithValue("quantity", quantity);
+                    dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                    dbCommand.Parameters.AddWithValue("storeID", storeId);
 
-                dbCommand.Connection = sqlOps;
+                    dbCommand.Connection = sqlOps;
 
-                dbCommand.ExecuteNonQuery();
+                    dbCommand.ExecuteNonQuery();
 
+
+                    //STILL NEED TO SUBSTRACT FROM OWNER INVENTORY
+                }
+                else
+                {
+
+
+                    var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
+
+                    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                    dbCommand.Parameters.AddWithValue("quantity", quantity);
+                    dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                    dbCommand.Parameters.AddWithValue("storeID", storeId);
+
+                    dbCommand.Connection = sqlOps;
+
+                    dbCommand.ExecuteNonQuery();
+                }
 
             }
             finally {
