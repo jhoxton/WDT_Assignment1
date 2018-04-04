@@ -278,6 +278,7 @@ namespace Assignment1
         public static StockRequest makeStockReguest(StockRequest request, Store currentStore)
         {
        Console.WriteLine();
+            //THIS DOESN"T ACTUALLY UPDATE THE LOCAL STORE!
             //Console.WriteLine("Enter request to process: ");
 
             string input = Console.ReadLine();

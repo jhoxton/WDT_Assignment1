@@ -218,32 +218,42 @@ namespace Assignment1
                             if (ownerItem.getStock() < quantity)
                             {
                                 addingRequest.Available = false;
-                                Console.WriteLine("< request ID is " + addingRequest.RequestID);
-                                Console.WriteLine("< request qunat is " + addingRequest.Quantity);
-                                Console.WriteLine("< owner quant is " + ownerItem.getStock());
-                                Console.WriteLine("<=============>");
+  
                             }
-                            Console.WriteLine("Request ID is " + addingRequest.RequestID);
-                            Console.WriteLine("Request qunat is " + addingRequest.Quantity);
-                            Console.WriteLine("Owner quant is " + ownerItem.getStock());
-                            Console.WriteLine("=============");
+ 
                         }
                     }
 
                     requestList.Add(addingRequest);
 
+                    connection.Close();
                 }
 
 
 
                 //GET STORE NAME AND PRODUCT NAME HERE
                 //ALSO GET OWNERS CURRENT STOCK
-                //Console.WriteLine("{0,-5}  {1,-22} {2,-30} {3,-35} {4,-40} {5,-48} ", "Request ID", "Store", "Product", "Quantity", "Current Stock", " Stock Availability");
+                Console.WriteLine("{0,-5}  {1,-22} {2,-30} {3,-35} {4,-40} {5,-48} ", "ID", "Store", "Product", "Quantity", "Current Stock", " Stock Availability");
  
-                //foreach(StockRequest test in requestList) {
-                //    Console.WriteLine("{0,-5}  {1,-22} {2,-30} {3,-35} {4,-40} {5,-48}",test.RequestID, test.StoreID, test.ProductID, test.Quantity, 0, test.Available);
-                //}
-                connection.Close();
+                foreach(StockRequest test in requestList) {
+                    string storeName = null;
+                    string productName = null;
+
+                    foreach(Item checkItemName in ownerInventoryStore.localStoreInventory) {
+
+                        int storeCheckId = test.StoreID;
+                         storeName = getStoreName(storeCheckId, storeName);
+
+
+
+                        if(test.ProductID == checkItemName.getId()) {
+                            productName = checkItemName.getName();
+                        }
+                    }
+
+                    Console.WriteLine("{0,-5}  {1,-22} {2,-30} {3,-35} {4,-40} {5,-48}",test.RequestID, storeName, productName, test.Quantity, 0, test.Available);
+                }
+
             }
 
             //Get owner stock levels. Has this already been done?
@@ -251,9 +261,43 @@ namespace Assignment1
             //Get all requsts from db, make new stock request items, find the match name method and print
 
             //User input
+
             //Cross check requst quantity against relevent stock item (use input and item ID)
             //If input > ID, bool is true, call process method and remove requst from db
 
+        }//end of displaystock request
+
+        public static string getStoreName(int storeCheckId, string storeName)//This is a lazy method to get store names without having to call the db again
+        {
+            switch (storeCheckId)
+            {
+                case 1:
+                    storeCheckId = 1;
+                    storeName = "Melbourne CBD";
+                    //return storeName;
+                    break;
+                case 2:
+                    storeCheckId = 2;
+                    storeName = "North Melbourne";
+                    //return storeName;
+                    break;
+                case 3:
+                    storeCheckId = 3;
+                    storeName = "East Melbourne";
+                    break;
+                case 4:
+                    storeCheckId = 4;
+                    storeName = "South Melbounre";
+                    break;
+                case 5:
+                    storeCheckId = 5;
+                    storeName = "West Melbourne";
+                    //return storeName;
+                    break;
+                default:
+                    break;
+            } //switch
+            return storeName;
         }
 
         public static void processStockRequest(int requestItem, int requestQuant, int requstStore) {
