@@ -61,6 +61,36 @@ namespace Assignment1
                 Console.WriteLine("Enter the store to use: ");
 
                 string userinput = Console.ReadLine();
+                //int valCheck = int.Parse(userinput);
+
+                //string line = Console.ReadLine();
+
+                int value;
+                if (int.TryParse(userinput, out value))
+                {
+                    if(value > 5) {
+                        Console.WriteLine("Please select a Store ID between 1 and 5");
+                        storePrint(storeSelect);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Please select a Store ID between 1 and 5");
+                    storePrint(storeSelect);
+                }
+
+                //if(valCheck > 5) {
+                //    Console.WriteLine("Please select a Store ID between 1 and 5");
+                //    storePrint(storeSelect);
+                //}
+
+
+
+                /*
+                 * 
+                 * Validation here 
+                 *
+                 */
 
                 foreach (DataRow row in table.Rows)
                 {
@@ -83,11 +113,6 @@ namespace Assignment1
             return storeSelect;
         }//End of store print
 
-        public int rePopulateStore(int storeSelect) {
-           
-            return storeSelect;
-
-        }
 
         public List<int> getStoreInv(List<int> storeItemsIntID) //Gets the store innventory
         {
