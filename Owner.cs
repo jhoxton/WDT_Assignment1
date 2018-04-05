@@ -65,6 +65,11 @@ namespace Assignment1
             }
 
         } // end of ownerMenu
+
+        //public static string verifyItemName(){
+            
+        //}
+
         public static void resetItemStock(int resetID, string resetName) //
         {
             //Console.WriteLine("ID IS " + resetID);
@@ -75,7 +80,7 @@ namespace Assignment1
 
             using (var sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
-            {
+            {//Updates the Stock item in the db
                 var selectedProduct = resetID;
                 var setToTwenty = 20;
 
@@ -94,13 +99,41 @@ namespace Assignment1
 
                 dbCommand.ExecuteNonQuery();
 
+                //The below is a hacky way of getting the item name, since the local store inventory has been cleared
+                var command = sqlOp.CreateCommand();
+                //Creates a command
+                command.CommandText = "select * from Product"; //Sets the text for the command
+
+                var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
+                var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
+
+                adapter.Fill(table);//Fills the DataTable (table) obeject with items from the SqlDataAdapter
+
+                foreach (var row in table.Select())
+                {
+                    int productID = (int)row["ProductID"];
+
+                    if (selectedProduct == productID)
+                    {
+                        resetName = row["Name"].ToString();
+                    }
+                }
+
+
                 sqlOp.Close();
+
+
                 Console.WriteLine("{0} stock reset to 20", resetName);
                 Console.WriteLine("\n======================\n");
                 sqlOp.Close();
                 return;
 
             }
+
+
+
+
+     
 
 
 
@@ -355,11 +388,6 @@ namespace Assignment1
             try {
                 sqlOps.Open();
  
-                /* NEED TO FIND A WAY TO CHECK FOR DUPLICATE KEYS (ie Products the store already has some of)
-                 * if (current Primary key(Product ID I think?) is found, run an Update
-                 * 
-                 * 
-                 */
                 var sqlText1 = "select * from StoreInventory where StoreID = @find";
                 //int checkID = 0;
                 SqlCommand dbCommCheck = new SqlCommand(sqlText1, sqlOps);
@@ -386,7 +414,7 @@ namespace Assignment1
                     dbCommand.ExecuteNonQuery();
 
 
-                    //STILL NEED TO SUBSTRACT FROM OWNER INVENTORY
+
                 }
                 else
                 {

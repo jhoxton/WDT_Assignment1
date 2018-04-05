@@ -73,6 +73,7 @@ namespace Assignment1
                        prodName = row["Name"].ToString();
                     }                    
                 }
+                connection.Close();
             }
 
 
