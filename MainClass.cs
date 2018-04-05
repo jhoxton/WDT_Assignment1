@@ -104,11 +104,11 @@ namespace Assignment1
                 int choice = 0;
                 while (true)
                 {
-                    Console.WriteLine("Welcome to Marvelous Magic\n==============");
+                    Console.WriteLine("==============\nWelcome to Marvelous Magic\n==============");
                     Console.WriteLine("1. Owner");
                     Console.WriteLine("2. Franchise Holder");
                     Console.WriteLine("3. Customer");
-                    Console.WriteLine("4. Quit");
+                    Console.WriteLine("4. Quit\n");
 
                     string userinput = Console.ReadLine();
 

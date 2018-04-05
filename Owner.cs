@@ -67,8 +67,11 @@ namespace Assignment1
         } // end of ownerMenu
         public static void resetItemStock(int resetID, string resetName) //
         {
-            Console.WriteLine("ID IS " + resetID);
-            //DB call here using resetID
+            //Console.WriteLine("ID IS " + resetID);
+
+            /*
+             * NEED TO GET THE ITEM NAME HERE SOMEHOW
+             */
 
             using (var sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
@@ -107,6 +110,7 @@ namespace Assignment1
         public static void resetItemIDSelect(Store ownerInventoryStore){ //Gets an item ID to reset in the database
            
             ownerProductPrint(ownerInventoryStore);  
+
             Console.WriteLine("Enter ID to reset:\n");
             try
             {
@@ -119,20 +123,24 @@ namespace Assignment1
 
                     //validation here
                     int userChoice = 0;
-
+                    string resetName = null;
                     if (int.TryParse(userinput, out userChoice))
                     {
                         choice = userChoice;
 
-                    string resetName = "Null";
+                   
+
                     foreach (Item nameLoop in ownerInventoryStore.localStoreInventory) {
-                        if (choice == nameLoop.getId()) {
+
+                       
+                        if (nameLoop.getId() == choice) {
                             resetName = nameLoop.getName();
+
                         }
                         
                     }
                         resetItemStock(choice, resetName);
-                    //Owner.ownerMenu();//??????
+
 
                     }
                     else
@@ -170,6 +178,13 @@ namespace Assignment1
 
             Console.WriteLine();
 
+            ownerItemsIntID.Clear();
+            ownerInventoryStore.localStoreInventory.Clear();
+            /*
+             * CHECK FOR EFFECTS HERE. THIS CLEAR FUNCTION MAY BE A BIT TOO NUCLEAR
+             * 
+             */
+
             //Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
         }//End of productPrint
 
@@ -180,8 +195,8 @@ namespace Assignment1
 
             List<StockRequest> requestList = new List<StockRequest>(); //List to store then print all current stock requests locally
 
-                                  //shift this method to the start of class so it doesn't get callec a milliontimes! Same with franchise and customer
-                                ownerInventoryStore.getOwnerInv(ownerItemsIntID);
+                                 
+            ownerInventoryStore.getOwnerInv(ownerItemsIntID);
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
@@ -270,8 +285,20 @@ namespace Assignment1
                         {
                             if(selectedRequest.Available == true) {
                                 processStockRequest(selectedRequest);
+
+                                ownerItemsIntID.Clear();
+                                ownerInventoryStore.localStoreInventory.Clear();
+                                /*
+                                 * CHECK FOR EFFECTS HERE. THIS CLEAR FUNCTION MAY BE A BIT TOO NUCLEAR
+                                 * DO THE SAME, IN THE ELSE BELOW
+                                 * 
+                                 */
                             } else {
                                 Console.WriteLine("Not enough stock in owner inventory to process stock request");
+                               
+                                ownerItemsIntID.Clear();
+                                ownerInventoryStore.localStoreInventory.Clear();
+                              
                             }
                           
                         }
@@ -283,6 +310,8 @@ namespace Assignment1
                 else
                 {
                     Console.WriteLine("Please input a valid stock request to process");
+                    ownerItemsIntID.Clear();
+                    ownerInventoryStore.localStoreInventory.Clear();
                     choice = 0;
                 }
 
@@ -335,10 +364,10 @@ namespace Assignment1
                 //int checkID = 0;
                 SqlCommand dbCommCheck = new SqlCommand(sqlText1, sqlOps);
                 dbCommCheck.Parameters.AddWithValue("find", storeId);
-                Console.WriteLine("Check id is " + storeId);
+                //Console.WriteLine("Check id is " + storeId);
                 if (storeId != 0)
                 {
-                    Console.WriteLine("ddsfdshfjksa");
+                    Console.WriteLine();
 
                     var sqlText = @"UPDATE StoreInventory
                 SET StockLevel = @quantity
