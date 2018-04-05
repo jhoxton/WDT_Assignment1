@@ -17,9 +17,14 @@ namespace Assignment1
             int storeSelect = 0;
             int threshold = 0;
 
-
-            storeSelect = currentStore.storePrint(storeSelect);
-
+            if (currentStore.getId() == 0)
+            {
+                storeSelect = currentStore.storePrint(storeSelect);
+            }
+            else
+            {
+                
+            }
             try
             {
                 int choice = 0;
@@ -50,6 +55,7 @@ namespace Assignment1
                         case 1:
                             choice = 1;
                             franchiseProductPrint(currentStore);
+
                             break;
                         case 2:
                             choice = 2;
@@ -193,7 +199,18 @@ namespace Assignment1
 
             Console.WriteLine();
             //franchiseProductPrint(currentStore);
-            storeItemsIntID = null;
+            //storeItemsIntID = null;
+
+            /* 
+             * 
+             * THIS SHOULD CLEAR THE LIST SO THERE ARE NO DOUBLES IN FUTURE
+             * NEED TO CHECK HERE IF IT HAS ANY OTHER EFFECT, OTHERWISE, COPY IT TO THE OTHER
+             * RELEVENT METHODS, LIKE CUSTOMER PURCHASE ETC
+             *
+             */
+
+            storeItemsIntID.Clear();
+            currentStore.localStoreInventory.Clear();
  
 
         }//End of productPrint
