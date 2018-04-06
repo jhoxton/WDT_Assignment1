@@ -53,7 +53,7 @@ namespace Assignment1
                             return;
                         case 2:
                             return;
-                         
+
                         default:
                             break;
                     } //End Switch
@@ -83,7 +83,7 @@ namespace Assignment1
             {
                 int choice = 0;
                 while (choice == 0)
-                   
+
                 {
                     int userChoice = 0;
                     foreach (Item i in currentStore.localStoreInventory.Skip(pageOffset).Take(pageSize).ToList())
@@ -209,7 +209,7 @@ namespace Assignment1
 
                 }
             }
-            else if (canBuy ==false)
+            else if (canBuy == false)
             {
                 customerMenu();
                 //return;

@@ -14,20 +14,24 @@ namespace Assignment1
 
         public List<Item> localStoreInventory = new List<Item>();
 
-        public List<int> thresholdIDs = new List<int>(); 
+        public List<int> thresholdIDs = new List<int>();
 
-        public string getName() {
+        public string getName()
+        {
             return name;
         }
 
-        public int getId() {
+        public int getId()
+        {
             return id;
         }
-        public void setName(String name) {
+        public void setName(String name)
+        {
             this.name = name;
         }
 
-        public void setId(int id) {
+        public void setId(int id)
+        {
             this.id = id;
         }
         public Store(string name, int id)
@@ -38,16 +42,16 @@ namespace Assignment1
         }
 
         public int storePrint(int storeSelect) //Matches user input StoreID to database to write local Store Object
-        { 
+        {
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
             {
                 connection.Open();
 
                 var command = connection.CreateCommand();
-                command.CommandText = "select * from Store"; 
+                command.CommandText = "select * from Store";
 
                 var table = new DataTable();
-                var adapter = new SqlDataAdapter(command); 
+                var adapter = new SqlDataAdapter(command);
 
                 adapter.Fill(table);
 
@@ -68,7 +72,8 @@ namespace Assignment1
                 int value;
                 if (int.TryParse(userinput, out value))
                 {
-                    if(value > 5) {
+                    if (value > 5)
+                    {
                         Console.WriteLine("Please select a Store ID between 1 and 5");
                         storePrint(storeSelect);
                     }
@@ -175,17 +180,18 @@ namespace Assignment1
             //foreach (int i in storeItemsIntID)
             //{
             //    Console.WriteLine("storeItemsIntID list: " + i);
-             
+
             //}
             return storeItemsIntID;
         }//END OF getStoreInv 
-      
-        public int makeItem (int itemInStoreID, int stockLevel, List<int> storeItemsIntID ) {
+
+        public int makeItem(int itemInStoreID, int stockLevel, List<int> storeItemsIntID)
+        {
 
             Item addingItem = new Item(null, 0, 0);
             addingItem.setId(itemInStoreID);
             addingItem.setStock(stockLevel);
-           
+
 
             string storeRetrievedName = addingItem.listStore(itemInStoreID); //Gets item name from Item db
             addingItem.setName(storeRetrievedName);
@@ -198,7 +204,7 @@ namespace Assignment1
             return itemInStoreID;
 
 
-            
+
         }
         public List<int> getOwnerInv(List<int> storeItemsIntID) //Gets the store innventory
         {

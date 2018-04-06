@@ -9,7 +9,7 @@ namespace Assignment1
     public class MainClass
     {
         //ONCE EVERYTHING IS DONE, BREAK THIS UP INTO CLASS LIBRARIES TO USE
-      
+
         static void Main(string[] args)
         {
             //Item currentItem = new Item(null, 0);
@@ -17,7 +17,7 @@ namespace Assignment1
             //productPrint(currentItem);
             //SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
             //pagingTest();
-            mainMenu();           
+            mainMenu();
         }
 
 
@@ -31,32 +31,34 @@ namespace Assignment1
             const int pageSize = 3;
             var pageOffset = 0;
 
-            while(true) 
-            { 
+            while (true)
+            {
 
 
                 ///// LINQ METHOD
 
-                foreach (var x in list.Skip(pageOffset).Take(pageSize).ToList()) {
+                foreach (var x in list.Skip(pageOffset).Take(pageSize).ToList())
+                {
                     Console.WriteLine(x);
                 }
 
                 ////
                 //for (int i = pageOffset; i < list.Count && i - pageOffset < pageSize; i++)//Copied directly from Matthews example in tute
-                    
+
                 //{
                 //    Console.WriteLine("Item is " + i);
 
                 //}
                 Console.WriteLine("Press N for next page: ");
-                var input =Console.ReadLine();
+                var input = Console.ReadLine();
 
-                if(input.ToUpper() =="N") {
+                if (input.ToUpper() == "N")
+                {
                     pageOffset += pageSize;
-                    if(pageOffset >= list.Count)
+                    if (pageOffset >= list.Count)
                     {
                         pageOffset = 0;
-                    }              
+                    }
                 }
             }
 
@@ -137,7 +139,7 @@ namespace Assignment1
 
         } // end of mainMenu
 
-     
+
 
 
 

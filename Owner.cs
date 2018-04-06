@@ -67,7 +67,7 @@ namespace Assignment1
         } // end of ownerMenu
 
         //public static string verifyItemName(){
-            
+
         //}
 
         public static void resetItemStock(int resetID, string resetName) //
@@ -133,16 +133,17 @@ namespace Assignment1
 
 
 
-     
 
 
 
-        
+
+
         } //End of resetItemStock
 
-        public static void resetItemIDSelect(Store ownerInventoryStore){ //Gets an item ID to reset in the database
-           
-            ownerProductPrint(ownerInventoryStore);  
+        public static void resetItemIDSelect(Store ownerInventoryStore)
+        { //Gets an item ID to reset in the database
+
+            ownerProductPrint(ownerInventoryStore);
 
             Console.WriteLine("Enter ID to reset:\n");
             try
@@ -151,36 +152,38 @@ namespace Assignment1
                 int choice = 0;
                 //while (true)
                 //{
-                   
-                    string userinput = Console.ReadLine();
 
-                    //validation here
-                    int userChoice = 0;
-                    string resetName = null;
-                    if (int.TryParse(userinput, out userChoice))
+                string userinput = Console.ReadLine();
+
+                //validation here
+                int userChoice = 0;
+                string resetName = null;
+                if (int.TryParse(userinput, out userChoice))
+                {
+                    choice = userChoice;
+
+
+
+                    foreach (Item nameLoop in ownerInventoryStore.localStoreInventory)
                     {
-                        choice = userChoice;
 
-                   
 
-                    foreach (Item nameLoop in ownerInventoryStore.localStoreInventory) {
-
-                       
-                        if (nameLoop.getId() == choice) {
+                        if (nameLoop.getId() == choice)
+                        {
                             resetName = nameLoop.getName();
 
                         }
-                        
-                    }
-                        resetItemStock(choice, resetName);
-
 
                     }
-                    else
-                    {
-                        Console.WriteLine("Please input an item's ID to rest");
-                        choice = 0;
-                    }
+                    resetItemStock(choice, resetName);
+
+
+                }
+                else
+                {
+                    Console.WriteLine("Please input an item's ID to rest");
+                    choice = 0;
+                }
 
                 //} 
 
@@ -221,14 +224,15 @@ namespace Assignment1
             //Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
         }//End of productPrint
 
-        public static void displayStockRequests(Store ownerInventoryStore) { //Loops & prints all stock requests from the db, prompts the owner to process one. 
+        public static void displayStockRequests(Store ownerInventoryStore)
+        { //Loops & prints all stock requests from the db, prompts the owner to process one. 
             List<int> ownerItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
-          
+
 
             List<StockRequest> requestList = new List<StockRequest>(); //List to store then print all current stock requests locally
 
-                                 
+
             ownerInventoryStore.getOwnerInv(ownerItemsIntID);
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
@@ -265,7 +269,7 @@ namespace Assignment1
                             if (ownerItem.getStock() < quantity) //Checking if stock request can be processed
                             {
                                 addingRequest.Available = false;
-                            }
+                            } 
                         }
                     }
 
@@ -274,25 +278,29 @@ namespace Assignment1
                     connection.Close();
                 }
             }
-                Console.WriteLine("{0,-5} {1,-17} {2,-18} {3,-15} {4,-10} {5,-26} ", "ID", "Store", "Product", "Quantity", "Current Stock", " Stock Availability");
- 
-                foreach(StockRequest test in requestList) {
-                 
-                    string productName = null;
+            Console.WriteLine("{0,-5} {1,-17} {2,-18} {3,-15} {4,-10} {5,-26} ", "ID", "Store", "Product", "Quantity", "Current Stock", " Stock Availability");
 
-                    foreach(Item checkItemName in ownerInventoryStore.localStoreInventory) {
+            foreach (StockRequest test in requestList)
+            {
+                int ownerStock = 0;
+                string productName = null;
 
-                        int storeCheckId = test.StoreID;
+                foreach (Item checkItemName in ownerInventoryStore.localStoreInventory)
+                {
 
-                        test.findStoreName();//Local stock request method to get store name
+                    int storeCheckId = test.StoreID;
 
-                        if(test.ProductID == checkItemName.getId()) {
-                            productName = checkItemName.getName();
-                        }
+                    test.findStoreName();//Local stock request method to get store name
+
+                    if (test.ProductID == checkItemName.getId())
+                    {
+                        productName = checkItemName.getName();
+                        ownerStock =checkItemName.getStock(); //Gets the owners store stock for each loop through
                     }
-
-                    Console.WriteLine("{0,-5} {1,-17} {2,-18} {3,-15} {4,-10} {5,-26}  ",test.RequestID, test.StoreName, productName, test.Quantity, 0, test.Available);
                 }
+
+                Console.WriteLine("{0,-5} {1,-17} {2,-18} {3,-15} {4,-10} {5,-26}  ", test.RequestID, test.StoreName, productName, test.Quantity, ownerStock, test.Available);
+            }
 
             Console.WriteLine("\nEnter a request to process");
 
@@ -313,10 +321,12 @@ namespace Assignment1
                 {
                     choice = userChoice;
 
-                    foreach (StockRequest selectedRequest in requestList) {
-                        if(choice == selectedRequest.RequestID)
+                    foreach (StockRequest selectedRequest in requestList)
+                    {
+                        if (choice == selectedRequest.RequestID)
                         {
-                            if(selectedRequest.Available == true) {
+                            if (selectedRequest.Available == true)
+                            {
                                 processStockRequest(selectedRequest);
 
                                 ownerItemsIntID.Clear();
@@ -326,14 +336,16 @@ namespace Assignment1
                                  * DO THE SAME, IN THE ELSE BELOW
                                  * 
                                  */
-                            } else {
+                            }
+                            else
+                            {
                                 Console.WriteLine("Not enough stock in owner inventory to process stock request");
-                               
+
                                 ownerItemsIntID.Clear();
                                 ownerInventoryStore.localStoreInventory.Clear();
-                              
+
                             }
-                          
+
                         }
                     }
 
@@ -357,9 +369,10 @@ namespace Assignment1
         }//end of displaystock request
 
 
-        public static void processStockRequest(StockRequest selectedRequest) { //Assuming everything validated, process the db request
-         
-           
+        public static void processStockRequest(StockRequest selectedRequest)
+        { //Assuming everything validated, process the db request
+
+
             int stockRequestId = selectedRequest.RequestID;
             int storeId = selectedRequest.StoreID;
             int productId = selectedRequest.ProductID;
@@ -375,7 +388,7 @@ namespace Assignment1
                 sqlOps.Open();
                 SqlCommand cmd = new SqlCommand(sqlStatement, sqlOps);
                 cmd.Parameters.AddWithValue("StockRequestID", stockRequestId);
-                cmd.Parameters.AddWithValue("StoreID",storeId);
+                cmd.Parameters.AddWithValue("StoreID", storeId);
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
 
@@ -385,9 +398,10 @@ namespace Assignment1
                 sqlOps.Close();
             }
 
-            try {
+            try
+            {
                 sqlOps.Open();
- 
+
                 var sqlText1 = "select * from StoreInventory where StoreID = @find";
                 //int checkID = 0;
                 SqlCommand dbCommCheck = new SqlCommand(sqlText1, sqlOps);
@@ -402,7 +416,7 @@ namespace Assignment1
                 WHERE ProductID = @inventoryID
                 AND StoreID = @storeID";
 
-                     
+
 
                     SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
                     dbCommand.Parameters.AddWithValue("quantity", quantity);
@@ -433,7 +447,8 @@ namespace Assignment1
                 }
 
             }
-            finally {
+            finally
+            {
                 sqlOps.Close();
             }
 

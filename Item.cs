@@ -30,28 +30,31 @@ namespace Assignment1
             this.id = id;
         }
 
-        public void setStock(int stock) {
+        public void setStock(int stock)
+        {
             this.stock = stock;
         }
 
-        public int getStock () {
+        public int getStock()
+        {
             return stock;
         }
 
         public Item(string itemName, int itemId, int itemStock)
         {
-            
+
             name = itemName;
             id = itemId;
             stock = itemStock;
         }
-       
-        public string listStore(int itemInStoreID) { //This gets the item name when a store is populated with stock
+
+        public string listStore(int itemInStoreID)
+        { //This gets the item name when a store is populated with stock
 
             string prodName = null;
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-         
+
             {
                 connection.Open();
                 //Opens said "object"
@@ -69,9 +72,10 @@ namespace Assignment1
                 {
                     int productID = (int)row["ProductID"];
 
-                    if( itemInStoreID == productID) {
-                       prodName = row["Name"].ToString();
-                    }                    
+                    if (itemInStoreID == productID)
+                    {
+                        prodName = row["Name"].ToString();
+                    }
                 }
                 connection.Close();
             }
