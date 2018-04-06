@@ -262,8 +262,8 @@ namespace Assignment1
                     else
                     {
                         stockFull = false;
-                    Console.WriteLine("All inventory stock levels are equal to or above {0}", restockThreshold);
-                        franchiseMenu();
+                    //Console.WriteLine("All inventory stock levels are equal to or above {0}", restockThreshold);
+                        //franchiseMenu();
                     }
 
                 }
@@ -289,6 +289,9 @@ namespace Assignment1
                 //Console.WriteLine("1ST Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
                 Console.WriteLine("Enter request to process: ");
                 makeStockReguest(request, currentStore);
+            } else {
+                Console.WriteLine("All inventory stock levels are equal to or above {0}", restockThreshold);
+                franchiseMenu();
             }
            
 

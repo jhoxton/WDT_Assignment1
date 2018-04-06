@@ -402,49 +402,95 @@ namespace Assignment1
             {
                 sqlOps.Open();
 
-                var sqlText1 = "select * from StoreInventory where StoreID = @find";
-                //int checkID = 0;
-                SqlCommand dbCommCheck = new SqlCommand(sqlText1, sqlOps);
-                dbCommCheck.Parameters.AddWithValue("find", storeId);
-                //Console.WriteLine("Check id is " + storeId);
-                if (storeId != 0)
-                {
-                    Console.WriteLine();
+                //var sqlText1 = "select * from StoreInventory where StoreID = @find";
+                ////int checkID = 0;
+                //SqlCommand dbCommCheck = new SqlCommand(sqlText1, sqlOps);
+                //dbCommCheck.Parameters.AddWithValue("find", storeId);
+                ////Console.WriteLine("Check id is " + storeId);
 
-                    var sqlText = @"UPDATE StoreInventory
+
+                SqlCommand checkForRow = new SqlCommand("SELECT COUNT(*) FROM StoreInventory WHERE (StoreID = @storeID) AND (ProductID = @productID)", sqlOps);
+                checkForRow.Parameters.AddWithValue("@storeID", storeId);
+                checkForRow.Parameters.AddWithValue("@productID", productId);
+
+
+                int rowExists = (int)checkForRow.ExecuteScalar();
+
+                if (rowExists >= 0)
+                {
+                    //Row exist
+
+                        Console.WriteLine();
+
+                        var sqlText = @"UPDATE StoreInventory
                 SET StockLevel = @quantity
                 WHERE ProductID = @inventoryID
                 AND StoreID = @storeID";
 
 
 
-                    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
-                    dbCommand.Parameters.AddWithValue("quantity", quantity);
-                    dbCommand.Parameters.AddWithValue("inventoryID", productId);
-                    dbCommand.Parameters.AddWithValue("storeID", storeId);
+                        SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                        dbCommand.Parameters.AddWithValue("quantity", quantity);
+                        dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                        dbCommand.Parameters.AddWithValue("storeID", storeId);
 
-                    dbCommand.Connection = sqlOps;
+                        dbCommand.Connection = sqlOps;
 
-                    dbCommand.ExecuteNonQuery();
-
-
-
+                        dbCommand.ExecuteNonQuery();
                 }
                 else
                 {
+                    //Row doesn't exist.
+                        var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
 
+                        SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                        dbCommand.Parameters.AddWithValue("quantity", quantity);
+                        dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                        dbCommand.Parameters.AddWithValue("storeID", storeId);
 
-                    var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
+                        dbCommand.Connection = sqlOps;
 
-                    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
-                    dbCommand.Parameters.AddWithValue("quantity", quantity);
-                    dbCommand.Parameters.AddWithValue("inventoryID", productId);
-                    dbCommand.Parameters.AddWithValue("storeID", storeId);
-
-                    dbCommand.Connection = sqlOps;
-
-                    dbCommand.ExecuteNonQuery();
+                        dbCommand.ExecuteNonQuery();
                 }
+
+                //if (storeId != 0)
+                //{
+                //    Console.WriteLine();
+
+                //    var sqlText = @"UPDATE StoreInventory
+                //SET StockLevel = @quantity
+                //WHERE ProductID = @inventoryID
+                //AND StoreID = @storeID";
+
+
+
+                //    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                //    dbCommand.Parameters.AddWithValue("quantity", quantity);
+                //    dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                //    dbCommand.Parameters.AddWithValue("storeID", storeId);
+
+                //    dbCommand.Connection = sqlOps;
+
+                //    dbCommand.ExecuteNonQuery();
+
+
+
+                //}
+                //else
+                //{
+
+
+                //    var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
+
+                //    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                //    dbCommand.Parameters.AddWithValue("quantity", quantity);
+                //    dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                //    dbCommand.Parameters.AddWithValue("storeID", storeId);
+
+                //    dbCommand.Connection = sqlOps;
+
+                //    dbCommand.ExecuteNonQuery();
+                //}
 
             }
             finally
