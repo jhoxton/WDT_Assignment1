@@ -15,86 +15,57 @@ namespace Assignment1
             //Item currentItem = new Item(null, 0);
 
             //productPrint(currentItem);
-            SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
-
+            //SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
+            pagingTest();
             mainMenu();           
         }
 
-        public static void connectionTest()
+
+
+        public static void pagingTest()
         {
-            Console.WriteLine("Connecting to database");
+            var list = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
-            SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
+            var list2 = new List<int>();
 
-            sqlOp.Open();
+            const int pageSize = 3;
+            var pageOffset = 0;
 
-            //DataSet setProducts = new DataSet();
-            //SqlDataAdapter adapProducts = new SqlDataAdapter("select * from Product", sqlOp);
+            while(true) 
+            { 
 
-            //SqlCommandBuilder cmdBldr = new SqlCommandBuilder(adapProducts);
 
-            //adapProducts.Fill(setProducts, "Product");
+                ///// LINQ METHOD
 
-            //string updateString = @"
-            //update Product
-            //set Name = 'Did it work?'
-            //where Name = 'Test'";
+                foreach (var x in list.Skip(pageOffset).Take(pageSize).ToList()) {
+                    Console.WriteLine(x);
+                }
 
-            var newQuant = 10;
-            var selectedID = 7;
+                ////
+                //for (int i = pageOffset; i < list.Count && i - pageOffset < pageSize; i++)//Copied directly from Matthews example in tute
+                    
+                //{
+                //    Console.WriteLine("Item is " + i);
 
-            var sqlText = @"UPDATE StoreInventory
-                SET StockLevel = @price
-                WHERE ProductID = @inventoryID";
-            
-            SqlCommand dbCommand = new SqlCommand(sqlText, sqlOp);
-            dbCommand.Parameters.AddWithValue("price", newQuant);
-            dbCommand.Parameters.AddWithValue("inventoryID",selectedID );
+                //}
+                Console.WriteLine("Press N for next page: ");
+                var input =Console.ReadLine();
 
-            dbCommand.Connection = sqlOp;
+                if(input.ToUpper() =="N") {
+                    pageOffset += pageSize;
+                    if(pageOffset >= list.Count)
+                    {
+                        pageOffset = 0;
+                    }                }
+            }
 
-            dbCommand.ExecuteNonQuery();
 
-                            //string updateString = @"
-                            //         update StoreInventory
-                            //         set StockLevel = '10'
-                            //         where ProductID = '3'";
 
-                            //// 1. Instantiate a new command with command text only
-                            //SqlCommand cmd = new SqlCommand(updateString);
 
-                            //// 2. Set the Connection property
-                            //cmd.Connection = sqlOp;
 
-                            //// 3. Call ExecuteNonQuery to send command
-                            //cmd.ExecuteNonQuery();
-            sqlOp.Close();
+
 
         }
-
-        //public static void setRequestID() {
-            //using (var con = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-
-            //{
-            //    con.Open();
-            //    //Opens said "object"
-
-            //    SqlCommand cmd = new SqlCommand();
-
-
-            //    String query = "select max(StockRequestID) from StockRequest;";
-            //    cmd.Connection = con;
-            //    cmd.CommandText = query;
-            //    String retrievedID = cmd.ExecuteScalar().ToString();
-
-            //    int maxID = int.Parse(retrievedID) +1;
-
-            //    Console.WriteLine("Next stock request id should be" + maxID);
-            //    con.Close();
-
-            //}
-
-            //}
 
         public static void mainMenu()  //The main menu method
         {

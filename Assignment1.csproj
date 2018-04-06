@@ -55,6 +55,7 @@
     <Compile Include="StockRequest.cs" />
     <Compile Include="Franchise.cs" />
     <Compile Include="Owner.cs" />
+    <Compile Include="sqlShortCut.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\MySqlTransaction.xml" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Assignment1
 {
@@ -80,8 +81,12 @@ namespace Assignment1
 
             //loop over current store items here
 
+
+
+
             foreach (Item i in currentStore.localStoreInventory) //Test print on current stores stock
             {
+                //list.Skip(pageIndex * pageSize).Take(pageSize);
 
                 Console.WriteLine("{0,-5}  {1,-22} {2,-30}", i.getId(), i.getName(), i.getStock());
 
@@ -97,6 +102,9 @@ namespace Assignment1
                 {
                     string userinput = Console.ReadLine();
 
+                    if(userinput == "R") {
+                        customerMenu();
+                    }
                     //validation here
                     int userChoice = 0;
                     if (int.TryParse(userinput, out userChoice) | userinput != "N")
