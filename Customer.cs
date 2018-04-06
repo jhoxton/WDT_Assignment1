@@ -72,19 +72,17 @@ namespace Assignment1
 
             List<int> storeItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
-            //TODO Need to validate input to this List to avoid duplicates???
-
             currentStore.getStoreInv(storeItemsIntID); //Accesses the StoreInventory db to get items and qunatity in store         
             // Then creates new items (id, name and quantity) and adds them to the local store objects inventory
 
             Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
 
-            //loop over current store items here
 
 
 
 
-            foreach (Item i in currentStore.localStoreInventory) //Test print on current stores stock
+
+            foreach (Item i in currentStore.localStoreInventory) //loop over current store items here
             {
                 //list.Skip(pageIndex * pageSize).Take(pageSize);
 
@@ -102,7 +100,7 @@ namespace Assignment1
                 {
                     string userinput = Console.ReadLine();
 
-                    if(userinput == "R") {
+                    if(userinput.ToUpper() == "R") {
                         customerMenu();
                     }
                     //validation here
@@ -120,8 +118,6 @@ namespace Assignment1
                         //return prodInput;
                         return;
 
-
-
                     }
 
                     else
@@ -138,9 +134,6 @@ namespace Assignment1
             }
 
             //Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
-
-            //return prodInput;
-
 
         }//End of productPrint
 
@@ -176,8 +169,6 @@ namespace Assignment1
             {
                 Console.WriteLine("{0} doesn't have enough stock to fulfil the purchase", name);
                 canBuy = false;
-
-
 
                 //mainMenu();
                 return;

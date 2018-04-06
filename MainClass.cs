@@ -16,7 +16,7 @@ namespace Assignment1
 
             //productPrint(currentItem);
             //SqlConnection sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
-            pagingTest();
+            //pagingTest();
             mainMenu();           
         }
 
