@@ -397,7 +397,7 @@ namespace Assignment1
             {
                 sqlOps.Close();
             }
-
+            //This probably doesn't need to open and close again here. Just a disticion between the steps
             try
             {
                 sqlOps.Open();
@@ -453,54 +453,28 @@ namespace Assignment1
                         dbCommand.ExecuteNonQuery();
                 }
 
-                //if (storeId != 0)
-                //{
-                //    Console.WriteLine();
-
-                //    var sqlText = @"UPDATE StoreInventory
-                //SET StockLevel = @quantity
-                //WHERE ProductID = @inventoryID
-                //AND StoreID = @storeID";
-
-
-
-                //    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
-                //    dbCommand.Parameters.AddWithValue("quantity", quantity);
-                //    dbCommand.Parameters.AddWithValue("inventoryID", productId);
-                //    dbCommand.Parameters.AddWithValue("storeID", storeId);
-
-                //    dbCommand.Connection = sqlOps;
-
-                //    dbCommand.ExecuteNonQuery();
-
-
-
-                //}
-                //else
-                //{
-
-
-                //    var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
-
-                //    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
-                //    dbCommand.Parameters.AddWithValue("quantity", quantity);
-                //    dbCommand.Parameters.AddWithValue("inventoryID", productId);
-                //    dbCommand.Parameters.AddWithValue("storeID", storeId);
-
-                //    dbCommand.Connection = sqlOps;
-
-                //    dbCommand.ExecuteNonQuery();
-                //}
+ 
 
             }
             finally
             {
+
+                var ownerDelete = @"UPDATE OwnerInventory
+                SET StockLevel = @quantity
+                WHERE ProductID = @inventoryID";
+
+                SqlCommand dbCommand = new SqlCommand(ownerDelete, sqlOps);
+                dbCommand.Parameters.AddWithValue("quantity", quantity);
+                dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                //dbCommand.Parameters.AddWithValue("storeID", storeSelect);
+
+                dbCommand.Connection = sqlOps;
+
+                dbCommand.ExecuteNonQuery();
+
                 sqlOps.Close();
             }
 
-            //Call store db
-
-            //Update store stock with the 3 passed ints
 
         }
     }
