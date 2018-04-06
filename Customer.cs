@@ -77,35 +77,38 @@ namespace Assignment1
 
             Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
 
-
-
-
-
-
-            foreach (Item i in currentStore.localStoreInventory) //loop over current store items here
-            {
-                //list.Skip(pageIndex * pageSize).Take(pageSize);
-
-                Console.WriteLine("{0,-5}  {1,-22} {2,-30}", i.getId(), i.getName(), i.getStock());
-
-            }
-
-            Console.WriteLine("\n[Legend: 'N' Next Page | 'R' Return to Menu\n\nEnter product ID purchase or function:");
-            Console.WriteLine();
-
+            const int pageSize = 3;
+            var pageOffset = 0;
             try
             {
                 int choice = 0;
                 while (choice == 0)
+                   
                 {
-                    string userinput = Console.ReadLine();
+                    int userChoice = 0;
+                    foreach (Item i in currentStore.localStoreInventory.Skip(pageOffset).Take(pageSize).ToList())
+                    {
+                        Console.WriteLine("{0,-5}  {1,-22} {2,-30}", i.getId(), i.getName(), i.getStock());
+                    }
+                    Console.WriteLine("\nLegend: 'N' Next Page | 'R' Return to Menu\n\nEnter product ID purchase or function:");
+                    Console.WriteLine();
 
-                    if(userinput.ToUpper() == "R") {
+                    var input = Console.ReadLine();
+
+                    if (input.ToUpper() == "N") //Copied directly from Matthews example in tute
+                    {
+                        pageOffset += pageSize;
+                        if (pageOffset >= currentStore.localStoreInventory.Count)
+                        {
+                            pageOffset = 0;
+                        }
+                    }
+                    else if (input.ToUpper() == "R")
+                    {
                         customerMenu();
                     }
-                    //validation here
-                    int userChoice = 0;
-                    if (int.TryParse(userinput, out userChoice) | userinput != "N")
+
+                    else if (int.TryParse(input, out userChoice))
                     {
                         int storeSelect = currentStore.getId();
                         choice = userChoice;
@@ -116,13 +119,14 @@ namespace Assignment1
                         //Console.WriteLine("Prod input in PRODUCTPRINT is " + prodInput);
                         purcharse(prodInput, storeSelect, currentStore);
                         //return prodInput;
-                        return;
+                        //return;
+                        MainClass.mainMenu();
 
                     }
 
                     else
                     {
-                        Console.WriteLine("Please input number only between 1 and 4");
+                        Console.WriteLine("Please input a product ID or command");
                         choice = 0;
                     }
                 }

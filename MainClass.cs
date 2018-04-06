@@ -56,7 +56,8 @@ namespace Assignment1
                     if(pageOffset >= list.Count)
                     {
                         pageOffset = 0;
-                    }                }
+                    }              
+                }
             }
 
 
