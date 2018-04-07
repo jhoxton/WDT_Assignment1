@@ -269,7 +269,7 @@ namespace Assignment1
                             if (ownerItem.getStock() < quantity) //Checking if stock request can be processed
                             {
                                 addingRequest.Available = false;
-                            } 
+                            }
                         }
                     }
 
@@ -295,7 +295,7 @@ namespace Assignment1
                     if (test.ProductID == checkItemName.getId())
                     {
                         productName = checkItemName.getName();
-                        ownerStock =checkItemName.getStock(); //Gets the owners store stock for each loop through
+                        ownerStock = checkItemName.getStock(); //Gets the owners store stock for each loop through
                     }
                 }
 
@@ -413,66 +413,83 @@ namespace Assignment1
                 checkForRow.Parameters.AddWithValue("@storeID", storeId);
                 checkForRow.Parameters.AddWithValue("@productID", productId);
 
-
+                //Counts StoreInventory row to determine to add a row or modify a row
                 int rowExists = (int)checkForRow.ExecuteScalar();
 
-                if (rowExists >= 0)
+                if (rowExists > 0)
                 {
                     //Row exist
 
-                        Console.WriteLine();
+                    Console.WriteLine();
 
-                        var sqlText = @"UPDATE StoreInventory
+                    var sqlText = @"UPDATE StoreInventory
                 SET StockLevel = @quantity
                 WHERE ProductID = @inventoryID
                 AND StoreID = @storeID";
 
 
 
-                        SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
-                        dbCommand.Parameters.AddWithValue("quantity", quantity);
-                        dbCommand.Parameters.AddWithValue("inventoryID", productId);
-                        dbCommand.Parameters.AddWithValue("storeID", storeId);
+                    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                    dbCommand.Parameters.AddWithValue("quantity", quantity);
+                    dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                    dbCommand.Parameters.AddWithValue("storeID", storeId);
 
-                        dbCommand.Connection = sqlOps;
+                    dbCommand.Connection = sqlOps;
 
-                        dbCommand.ExecuteNonQuery();
+                    dbCommand.ExecuteNonQuery();
                 }
                 else
                 {
                     //Row doesn't exist.
-                        var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
+                    //Console.WriteLine("AINT FOUND NO ROW");
+                    var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
 
-                        SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
-                        dbCommand.Parameters.AddWithValue("quantity", quantity);
-                        dbCommand.Parameters.AddWithValue("inventoryID", productId);
-                        dbCommand.Parameters.AddWithValue("storeID", storeId);
+                    SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
+                    dbCommand.Parameters.AddWithValue("quantity", quantity);
+                    dbCommand.Parameters.AddWithValue("inventoryID", productId);
+                    dbCommand.Parameters.AddWithValue("storeID", storeId);
 
-                        dbCommand.Connection = sqlOps;
+                    dbCommand.Connection = sqlOps;
 
-                        dbCommand.ExecuteNonQuery();
+                    dbCommand.ExecuteNonQuery();
                 }
 
- 
+
 
             }
             finally
             {
 
+
+                //Gets the current stock from the owner inventory and subtracts the StockRequest
+                SqlCommand OwnerUpdateInv = new SqlCommand();
+                OwnerUpdateInv.CommandType = CommandType.Text;
+
+                OwnerUpdateInv.Parameters.Add("ownerProdID", SqlDbType.VarChar).Value = productId;
+
+                OwnerUpdateInv.CommandText = "SELECT StockLevel FROM OwnerInventory WHERE ProductID = @ownerProdID";
+                OwnerUpdateInv.Connection = sqlOps;
+                Int32 newOwnerQuant = (Int32)OwnerUpdateInv.ExecuteScalar();
+
+                newOwnerQuant = newOwnerQuant - quantity;
+                //Console.WriteLine("newOwnerQuant " + newOwnerQuant);
+
+                //Updates the Owner Inventory with the new stock request
                 var ownerDelete = @"UPDATE OwnerInventory
                 SET StockLevel = @quantity
                 WHERE ProductID = @inventoryID";
 
                 SqlCommand dbCommand = new SqlCommand(ownerDelete, sqlOps);
-                dbCommand.Parameters.AddWithValue("quantity", quantity);
+                dbCommand.Parameters.AddWithValue("quantity", newOwnerQuant);
                 dbCommand.Parameters.AddWithValue("inventoryID", productId);
-                //dbCommand.Parameters.AddWithValue("storeID", storeSelect);
 
                 dbCommand.Connection = sqlOps;
 
                 dbCommand.ExecuteNonQuery();
 
                 sqlOps.Close();
+                //storeId = 0;
+                //productId = 0;
             }
 
 
