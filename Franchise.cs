@@ -23,7 +23,7 @@ namespace Assignment1
             }
             else
             {
-
+                //Double check to make sure the currentStore is blank/null to avoid local data being messed up
             }
             try
             {
@@ -38,7 +38,6 @@ namespace Assignment1
 
                     string userinput = Console.ReadLine();
 
-                    //validation here
                     int userChoice = 0;
                     if (int.TryParse(userinput, out userChoice))
                     {
@@ -49,29 +48,24 @@ namespace Assignment1
                         Console.WriteLine("Please input number only between 1 and 4");
                         choice = 0;
                     }
-
                     switch (choice)
                     {
                         case 1:
                             choice = 1;
                             franchiseProductPrint(currentStore);
-
                             break;
                         case 2:
                             choice = 2;
                             setThreshold(threshold, currentStore);
-
                             break;
                         case 3:
                             choice = 3;
-
                             addNewItem(currentStore);
                             //Get all Owner product IDs into a list, cross check against Franchise IDs and then remove any that are in both
                             //Then print said list and allow user to select an ID, which makes a single item to add to Stores database
                             break;
                         case 4:
                             return;
-
                         default:
                             break;
                     } //End Switch
@@ -86,7 +80,6 @@ namespace Assignment1
 
         public static void addNewItem(Store currentStore)
         {
-
             List<int> ownerItemsIntID = new List<int>(); //ID's of the owner ie all products
             List<int> franchiseItemsIntID = new List<int>();//ID's of the current store that are in stock
             List<int> unstockedItemsIntId = new List<int>();//ID's that are currently not in stock in the current store, to print
@@ -96,7 +89,6 @@ namespace Assignment1
             currentStore.getStoreInv(franchiseItemsIntID);//YAY for modular reusable methods! Better check for artifacts though
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            //Creates a new SQL connection "object"
             {
                 connection.Open();
 
@@ -123,7 +115,6 @@ namespace Assignment1
 
                     string storeRetrievedName = addingItem.listStore(itemInStoreInv); //Gets item name from Item db
                     addingItem.setName(storeRetrievedName);
-                    //Console.WriteLine("Retrieved name is: "+  storeRetrievedName);
                     itemsToPrint.Add(addingItem);
 
                 }
@@ -134,28 +125,11 @@ namespace Assignment1
                     franchiseItemsIntID.Add(storeID);//Gets item ID's from store stock to cross check
 
                 }
-
-
-                //makeItem(itemInStoreInv, stockLevel, storeItemsIntID); 
                 connection.Close();
-
-
-                //foreach(int i in ownerItemsIntID) {
-                //    Console.WriteLine("Owners items are " +i);
-                //}
-                //foreach (int i in franchiseItemsIntID)
-                //{
-                //    Console.WriteLine("Franchise items are " + i);
-                //}
-
 
                 ownerItemsIntID.RemoveAll(l => franchiseItemsIntID.Contains(l));//Removers any duplicates in both lists from the Owner list (it has the important info)
                 List<int> itemsNotInStockIntID = ownerItemsIntID; //Makes a new list of item ID's not in store
 
-                //foreach (int i in itemsNotInStockIntID)
-                //{
-                //    Console.WriteLine("New items are " + i);
-                //}
                 Console.WriteLine("\nInventory");
 
                 Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock\n");
@@ -166,14 +140,13 @@ namespace Assignment1
                         if (i == j.getId())
                         {
                             Console.WriteLine("{0,-5}  {1,-22} {2,-30}", j.getId(), j.getName(), j.getStock());
-                            //FIx this print here
                         }
                     }
                 }
                 Console.WriteLine();
                 Console.WriteLine("Enter product to add: \n");
-                StockRequest singleItemRequest = new StockRequest(0, 0, 0, 1, true, null, null); //Makes a new stock request item but with the quantity set to 1
-                //singleItemRequest.Quantity = 1; //Being double sure here. TODO delete this
+                StockRequest singleItemRequest = new StockRequest(0, 0, 0, 1, true, null, null); 
+                //Makes a new stock request item but with the quantity set to 1
 
                 makeStockReguest(singleItemRequest, currentStore);
             }
@@ -183,35 +156,20 @@ namespace Assignment1
         {
             List<int> storeItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
-            //TODO Need to validate input to this List to avoid duplicates???
             Console.WriteLine("Inventory");
 
-            currentStore.getStoreInv(storeItemsIntID); //Accesses the StoreInventory db to get items and qunatity in store         
-
+            currentStore.getStoreInv(storeItemsIntID); 
+            //Accesses the StoreInventory db to get items and qunatity in store         
             // Then creates new items (id, name and quantity) and adds them to the local store objects inventory
 
             Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
 
-            //loop over current store items here
-
             foreach (Item i in currentStore.localStoreInventory) //Test print on current stores stock
             {
-
                 Console.WriteLine("{0,-5}  {1,-22} {2,-30}", i.getId(), i.getName(), i.getStock());
-
             }
 
             Console.WriteLine();
-            //franchiseProductPrint(currentStore);
-            //storeItemsIntID = null;
-
-            /* 
-             * 
-             * THIS SHOULD CLEAR THE LIST SO THERE ARE NO DOUBLES IN FUTURE
-             * NEED TO CHECK HERE IF IT HAS ANY OTHER EFFECT, OTHERWISE, COPY IT TO THE OTHER
-             * RELEVENT METHODS, LIKE CUSTOMER PURCHASE ETC
-             *
-             */
 
             storeItemsIntID.Clear();
             currentStore.localStoreInventory.Clear();
@@ -227,11 +185,6 @@ namespace Assignment1
             currentStore.getStoreInv(storeItemsIntID);
             StockRequest request = new StockRequest(0, 0, 0, 0, true, null, null);
 
-
-            //foreach(Item i in currentStore.localStoreInventory) {
-            //    Console.WriteLine("Items found " +i.getName());
-            //}
-
             Console.WriteLine("Enter threshold for re-stocking ");
             int restockThreshold = 0;
             int choice;
@@ -243,33 +196,25 @@ namespace Assignment1
                 restockThreshold = choice;
             }
 
-            //Console.WriteLine("restockThreshold is "+ restockThreshold);
-            //Console.WriteLine("choice is" + choice);
-
             while (stockFull == false)
                 foreach (Item i in currentStore.localStoreInventory)
                 {
-                    //Console.WriteLine(i.getId());//Getting item ID's. If they are higher than userinput, ignore, if lower add to currentStore.thresholdIDs
+                   //Getting item ID's. If they are higher than userinput, ignore, if lower add to currentStore.thresholdIDs
                     if (i.getStock() <= restockThreshold)
                     {
 
                         currentStore.thresholdIDs.Add(i.getId());
                         stockFull = true;
-                        //foreach(int test in currentStore.thresholdIDs){
-                        //    Console.WriteLine(test);
-                        //}
                     }
                     else
                     {
                         stockFull = false;
-                    //Console.WriteLine("All inventory stock levels are equal to or above {0}", restockThreshold);
-                        //franchiseMenu();
+
                     }
 
                 }
             if (stockFull == true)
             {
-
                 Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
                 foreach (Item itemPrint in currentStore.localStoreInventory)
                 {
@@ -282,7 +227,6 @@ namespace Assignment1
                         }
                     }
                 }
-                //NEED TO WRITE TO THE REQUEST ITEM HERE?
 
                 request.Quantity = restockThreshold;//Sets the threshold as the quantity of the stock request item
 
@@ -300,14 +244,11 @@ namespace Assignment1
         public static StockRequest makeStockReguest(StockRequest request, Store currentStore)
         {
             Console.WriteLine();
-            //THIS DOESN"T ACTUALLY UPDATE THE LOCAL STORE!
-            //Console.WriteLine("Enter request to process: ");
 
             string input = Console.ReadLine();
 
             int requestToProcess = 0;
             int choice;
-
 
             if (int.TryParse(input, out choice))
             {
@@ -316,22 +257,17 @@ namespace Assignment1
 
 
             using (var con = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            //Sets the new requests ID via a database call to get the max current ID
+            //This is to make sure the primary key in the StockRequest table is incremental
             {
                 con.Open();
-                //Opens said "object"
 
                 SqlCommand cmd = new SqlCommand();
-
 
                 String query = "select max(StockRequestID) from StockRequest;";
                 cmd.Connection = con;
                 cmd.CommandText = query;
                 String retrievedID = cmd.ExecuteScalar().ToString();
-               
 
-                //Console.WriteLine("Retrieved ID is before parse " + retrievedID);
-                //int maxID = int.Parse(retrievedID);
                 int maxID =0;
                 //int choice;
                 if (int.TryParse(retrievedID, out choice))
@@ -339,22 +275,16 @@ namespace Assignment1
                     maxID = choice;
                 }
 
-                maxID = maxID + 1; //For some reason the whole thing crashes if there are no other Stock Requests in the database!
-
+                maxID = maxID + 1; 
+        /*
+         * For some reason the whole thing crashes if there are no other Stock Requests in the database!
+         */
                 con.Close();
                 request.RequestID = maxID;
-
             }
-
-
-
-            //Console.WriteLine("Request ID is now " + request.RequestID);
-
 
             request.StoreID = currentStore.getId();
             request.ProductID = requestToProcess;
-
-            //Console.WriteLine("2nd Request Item = ID {0} StoreID {1} Quantity {2} ItemID {3}", request.RequestID, request.StoreID, request.Quantity, request.ProductID);
 
             var stockRequestID = request.RequestID;
             var storeID = request.StoreID;
@@ -363,11 +293,8 @@ namespace Assignment1
 
             var insertCmd = "SET IDENTITY_INSERT StockRequest ON INSERT INTO StockRequest (StockRequestID, StoreID, ProductID, Quantity) VALUES (@stockRequestIDval, @storeIDval, @productIDval, @quantityVal)";
 
-
             using (var sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-
             {
-
                 using (SqlCommand comm = new SqlCommand())
                 {
                     comm.Connection = sqlOp;
@@ -379,31 +306,16 @@ namespace Assignment1
                     comm.Parameters.AddWithValue("@storeIDval", storeID);
                     comm.Parameters.AddWithValue("@productIDval", productID);
                     comm.Parameters.AddWithValue("@quantityVal", quanity);
-                    //try
-                    //{
+
                     sqlOp.Open();
                     comm.ExecuteNonQuery();
-                    //}
-                    //catch (SqlException)
-                    //{
-                    //Console.WriteLine("Error");
-                    //}
 
                 }
                 sqlOp.Close();
-
             }
-
             return request;
         }
-
-
-
-
-
     }
-
-
 }
 
 

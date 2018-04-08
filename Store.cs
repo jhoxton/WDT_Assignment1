@@ -11,8 +11,7 @@ namespace Assignment1
         private string name;
         private int id;
 
-
-        public List<Item> localStoreInventory = new List<Item>();
+        public List<Item> localStoreInventory = new List<Item>();//Local copy of the stores items
 
         public List<int> thresholdIDs = new List<int>();
 
@@ -112,21 +111,17 @@ namespace Assignment1
                 connection.Close();
             }
 
-            //Console.WriteLine("Store ID:" + getId());
-            //Console.WriteLine("Store Name: " + getName());
-            //Console.WriteLine("Inside store object, ID is : " + this.getId());
             return storeSelect;
         }//End of store print
 
 
-        public List<int> getStoreInv(List<int> storeItemsIntID) //Gets the store innventory
+        public List<int> getStoreInv(List<int> storeItemsIntID) //Gets the store innventory as ints to cross check just the Product ID's
         {
             if (storeItemsIntID != null)
             {
                 var selectedID = this.getId();
 
                 using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-                //Creates a new SQL connection "object"
                 {
                     connection.Open();
 
@@ -146,11 +141,8 @@ namespace Assignment1
 
                     foreach (var row in table.Select())
                     {
-
-                        int itemInStoreInv = (int)row["ProductID"];//This is the old one
+                        int itemInStoreInv = (int)row["ProductID"];
                         int stockLevel = (int)row["StockLevel"];
-
-                        //Console.WriteLine("BEFORE MAKE ITEM ID is: " +itemInStoreInv +  " Stock is: " + stockLevel);
 
                         foreach (int i in storeItemsIntID)
                         {
@@ -163,57 +155,34 @@ namespace Assignment1
                                 storeItemsIntID.Add(itemInStoreInv);//This is the ID to match to quantity in the StoreInventory table
                             }
                         }
-
                         makeItem(itemInStoreInv, stockLevel, storeItemsIntID); //Creates items then adds them to the local soter inventory
-
                     }
-
-                    //foreach (Item i in localStoreInventory) //Test print on current stores stock
-                    //{
-                    //    Console.WriteLine("ID is " + i.getId() + " Product Name is " + i.getName() + " Stock is " + i.getStock());
-                    //}
-
                     connection.Close();
-
                 }
             }
-            //foreach (int i in storeItemsIntID)
-            //{
-            //    Console.WriteLine("storeItemsIntID list: " + i);
-
-            //}
             return storeItemsIntID;
         }//END OF getStoreInv 
 
-        public int makeItem(int itemInStoreID, int stockLevel, List<int> storeItemsIntID)
+        public int makeItem(int itemInStoreID, int stockLevel, List<int> storeItemsIntID) //Makes new Item objects in the local store object
         {
-
             Item addingItem = new Item(null, 0, 0);
             addingItem.setId(itemInStoreID);
             addingItem.setStock(stockLevel);
 
-
             string storeRetrievedName = addingItem.listStore(itemInStoreID); //Gets item name from Item db
-            addingItem.setName(storeRetrievedName);
-            //Console.WriteLine("Item found is {0}",storeRetrievedName);
-            //Console.WriteLine("storeRetrievedName is "+ storeRetrievedName);
-            //Console.WriteLine("itemInStoreID is: " + itemInStoreID);
-
-            localStoreInventory.Add(addingItem);
+         
+            addingItem.setName(storeRetrievedName);//Gets the item name
+            localStoreInventory.Add(addingItem);//Adds the new item to the current store inventory
 
             return itemInStoreID;
 
+        }//end of makeItem
 
-
-        }
-        public List<int> getOwnerInv(List<int> storeItemsIntID) //Gets the store innventory
+        public List<int> getOwnerInv(List<int> storeItemsIntID) //Gets the owner inventory, which is treated like a local Store
         {
             var selectedID = this.getId();
 
-            //WRITE TO ITEM OBJECTS TO STORE LIST HERE AND PASS IT BACK!!!
-
-            using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            //Creates a new SQL connection "object"
+             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
             {
                 connection.Open();
 
@@ -233,13 +202,8 @@ namespace Assignment1
 
                 foreach (var row in table.Select())
                 {
-
-                    int itemInStoreInv = (int)row["ProductID"];//This is the old one
+                    int itemInStoreInv = (int)row["ProductID"];
                     int stockLevel = (int)row["StockLevel"];
-
-                    //Console.WriteLine("BEFORE MAKE ITEM ID is: " +itemInStoreInv +  " Stock is: " + stockLevel);
-
-
                     foreach (int i in storeItemsIntID)
                     {
                         if (i == itemInStoreInv)
@@ -251,24 +215,10 @@ namespace Assignment1
                             storeItemsIntID.Add(itemInStoreInv);//This is the ID to match to quantity in the StoreInventory table
                         }
                     }
-
                     makeItem(itemInStoreInv, stockLevel, storeItemsIntID); //Creates items then adds them to the local soter inventory
-
                 }
-
-                //foreach (Item i in localStoreInventory) //Test print on current stores stock
-                //{
-                //    Console.WriteLine("ID is " + i.getId() + " Product Name is " + i.getName() + " Stock is " + i.getStock());
-                //}
-
                 connection.Close();
-
             }
-            //foreach (int i in storeItemsIntID)
-            //{
-            //    Console.WriteLine("storeItemsIntID list: " + i);
-
-            //}
             return storeItemsIntID;
         }//END OF getOwnerInv 
     }

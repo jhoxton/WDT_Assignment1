@@ -25,7 +25,6 @@ namespace Assignment1
 
                     string userinput = Console.ReadLine();
 
-                    //validation here
                     int userChoice = 0;
 
                     if (int.TryParse(userinput, out userChoice))
@@ -66,21 +65,11 @@ namespace Assignment1
 
         } // end of ownerMenu
 
-        //public static string verifyItemName(){
-
-        //}
-
         public static void resetItemStock(int resetID, string resetName) //
         {
-            //Console.WriteLine("ID IS " + resetID);
-
-            /*
-             * NEED TO GET THE ITEM NAME HERE SOMEHOW
-             */
-
             using (var sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-
-            {//Updates the Stock item in the db
+            {
+                //Updates the Stock item in the db
                 var selectedProduct = resetID;
                 var setToTwenty = 20;
 
@@ -101,7 +90,7 @@ namespace Assignment1
 
                 //The below is a hacky way of getting the item name, since the local store inventory has been cleared
                 var command = sqlOp.CreateCommand();
-                //Creates a command
+
                 command.CommandText = "select * from Product"; //Sets the text for the command
 
                 var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
@@ -118,26 +107,13 @@ namespace Assignment1
                         resetName = row["Name"].ToString();
                     }
                 }
-
-
                 sqlOp.Close();
-
 
                 Console.WriteLine("{0} stock reset to 20", resetName);
                 Console.WriteLine("\n======================\n");
                 sqlOp.Close();
                 return;
-
             }
-
-
-
-
-
-
-
-
-
         } //End of resetItemStock
 
         public static void resetItemIDSelect(Store ownerInventoryStore)
@@ -148,46 +124,31 @@ namespace Assignment1
             Console.WriteLine("Enter ID to reset:\n");
             try
             {
-
                 int choice = 0;
-                //while (true)
-                //{
 
                 string userinput = Console.ReadLine();
 
-                //validation here
                 int userChoice = 0;
                 string resetName = null;
+
                 if (int.TryParse(userinput, out userChoice))
                 {
                     choice = userChoice;
 
-
-
                     foreach (Item nameLoop in ownerInventoryStore.localStoreInventory)
                     {
-
-
                         if (nameLoop.getId() == choice)
                         {
                             resetName = nameLoop.getName();
-
                         }
-
                     }
                     resetItemStock(choice, resetName);
-
-
                 }
                 else
                 {
                     Console.WriteLine("Please input an item's ID to rest");
                     choice = 0;
                 }
-
-                //} 
-
-
             }
             catch (Exception e)
             {
@@ -199,10 +160,10 @@ namespace Assignment1
         {
             List<int> ownerItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
-            //TODO Need to validate input to this List to avoid duplicates???
             Console.WriteLine("Owner Inventory\n");
 
-            ownerInventoryStore.getOwnerInv(ownerItemsIntID); //Accesses the OwnerInventory db to get items and qunatity in store         
+            ownerInventoryStore.getOwnerInv(ownerItemsIntID); 
+            //Accesses the OwnerInventory db to get items and qunatity in store         
             // Then creates new items (id, name and quantity) and adds them to the local store objects inventory
 
             Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
@@ -216,27 +177,18 @@ namespace Assignment1
 
             ownerItemsIntID.Clear();
             ownerInventoryStore.localStoreInventory.Clear();
-            /*
-             * CHECK FOR EFFECTS HERE. THIS CLEAR FUNCTION MAY BE A BIT TOO NUCLEAR
-             * 
-             */
 
-            //Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
         }//End of productPrint
 
         public static void displayStockRequests(Store ownerInventoryStore)
         { //Loops & prints all stock requests from the db, prompts the owner to process one. 
             List<int> ownerItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
 
-
-
             List<StockRequest> requestList = new List<StockRequest>(); //List to store then print all current stock requests locally
-
 
             ownerInventoryStore.getOwnerInv(ownerItemsIntID);
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-
             {
                 connection.Open();
                 //Opens said "object"
@@ -252,7 +204,6 @@ namespace Assignment1
 
                 foreach (var row in table.Select())
                 {
-
                     int requestID = (int)row["StockRequestID"];
                     int storeID = (int)row["StoreID"];
                     int productID = (int)row["ProductID"];
@@ -262,10 +213,8 @@ namespace Assignment1
                     addingRequest.Quantity = quantity;
                     foreach (Item ownerItem in ownerInventoryStore.localStoreInventory)
                     {
-
                         if (addingRequest.ProductID == ownerItem.getId())
                         {
-
                             if (ownerItem.getStock() < quantity) //Checking if stock request can be processed
                             {
                                 addingRequest.Available = false;
@@ -304,18 +253,11 @@ namespace Assignment1
 
             Console.WriteLine("\nEnter a request to process");
 
-            //User input
             try
             {
-
-                int choice = 0;
-                //while (true)
-                //{
-
-                string userinput = Console.ReadLine();
-
-                //validation here
+                int choice = 0;   
                 int userChoice = 0;
+                string userinput = Console.ReadLine();
 
                 if (int.TryParse(userinput, out userChoice))
                 {
@@ -331,26 +273,15 @@ namespace Assignment1
 
                                 ownerItemsIntID.Clear();
                                 ownerInventoryStore.localStoreInventory.Clear();
-                                /*
-                                 * CHECK FOR EFFECTS HERE. THIS CLEAR FUNCTION MAY BE A BIT TOO NUCLEAR
-                                 * DO THE SAME, IN THE ELSE BELOW
-                                 * 
-                                 */
                             }
                             else
                             {
                                 Console.WriteLine("Not enough stock in owner inventory to process stock request");
-
                                 ownerItemsIntID.Clear();
                                 ownerInventoryStore.localStoreInventory.Clear();
-
                             }
-
                         }
                     }
-
-
-
                 }
                 else
                 {
@@ -372,12 +303,10 @@ namespace Assignment1
         public static void processStockRequest(StockRequest selectedRequest)
         { //Assuming everything validated, process the db request
 
-
             int stockRequestId = selectedRequest.RequestID;
             int storeId = selectedRequest.StoreID;
             int productId = selectedRequest.ProductID;
             int quantity = selectedRequest.Quantity;
-
 
             SqlConnection sqlOps = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123");
 
@@ -401,33 +330,22 @@ namespace Assignment1
             try
             {
                 sqlOps.Open();
-
-                //var sqlText1 = "select * from StoreInventory where StoreID = @find";
-                ////int checkID = 0;
-                //SqlCommand dbCommCheck = new SqlCommand(sqlText1, sqlOps);
-                //dbCommCheck.Parameters.AddWithValue("find", storeId);
-                ////Console.WriteLine("Check id is " + storeId);
-
-
                 SqlCommand checkForRow = new SqlCommand("SELECT COUNT(*) FROM StoreInventory WHERE (StoreID = @storeID) AND (ProductID = @productID)", sqlOps);
                 checkForRow.Parameters.AddWithValue("@storeID", storeId);
                 checkForRow.Parameters.AddWithValue("@productID", productId);
 
-                //Counts StoreInventory row to determine to add a row or modify a row
+               //Counts StoreInventory row to determine to add a row or modify a row
                 int rowExists = (int)checkForRow.ExecuteScalar();
 
                 if (rowExists > 0)
                 {
                     //Row exist
-
                     Console.WriteLine();
 
                     var sqlText = @"UPDATE StoreInventory
-                SET StockLevel = @quantity
-                WHERE ProductID = @inventoryID
-                AND StoreID = @storeID";
-
-
+                                  SET StockLevel = @quantity
+                                  WHERE ProductID = @inventoryID
+                                  AND StoreID = @storeID";
 
                     SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
                     dbCommand.Parameters.AddWithValue("quantity", quantity);
@@ -441,7 +359,6 @@ namespace Assignment1
                 else
                 {
                     //Row doesn't exist.
-                    //Console.WriteLine("AINT FOUND NO ROW");
                     var sqlText = "INSERT INTO StoreInventory(StoreID, ProductID, StockLevel) VALUES(@storeID, @inventoryID, @quantity)";
 
                     SqlCommand dbCommand = new SqlCommand(sqlText, sqlOps);
@@ -453,14 +370,9 @@ namespace Assignment1
 
                     dbCommand.ExecuteNonQuery();
                 }
-
-
-
             }
             finally
             {
-
-
                 //Gets the current stock from the owner inventory and subtracts the StockRequest
                 SqlCommand OwnerUpdateInv = new SqlCommand();
                 OwnerUpdateInv.CommandType = CommandType.Text;
@@ -472,9 +384,8 @@ namespace Assignment1
                 Int32 newOwnerQuant = (Int32)OwnerUpdateInv.ExecuteScalar();
 
                 newOwnerQuant = newOwnerQuant - quantity;
-                //Console.WriteLine("newOwnerQuant " + newOwnerQuant);
 
-                //Updates the Owner Inventory with the new stock request
+                //Updates the Owner Inventory with the new stock level
                 var ownerDelete = @"UPDATE OwnerInventory
                 SET StockLevel = @quantity
                 WHERE ProductID = @inventoryID";
@@ -488,11 +399,7 @@ namespace Assignment1
                 dbCommand.ExecuteNonQuery();
 
                 sqlOps.Close();
-                //storeId = 0;
-                //productId = 0;
             }
-
-
         }
     }
 }

@@ -15,9 +15,6 @@ namespace Assignment1
             int storeSelect = 0;
 
             storeSelect = currentStore.storePrint(storeSelect); //Selects store from database, via StoreID . Writes store info to local store object
-
-            //Console.WriteLine("Store select is now " + currentStore.getName());
-
             try
             {
                 int choice = 0;
@@ -44,16 +41,12 @@ namespace Assignment1
                     {
                         case 1:
                             choice = 1;
-
-                            customerProductPrint(prodInput, currentStore); //Populates the local stores List of items (localStoreInventory)
+                            customerProductPrint(prodInput, currentStore); 
+                            //Populates the local stores List of items (localStoreInventory)
                             //Prints the available items then returns the users selected items and quantity for purchase
-
-                            //Console.WriteLine("Prod input back in MENU is" + prodInput);
-                            //purcharse(prodInput, storeSelect, currentStore);
                             return;
                         case 2:
                             return;
-
                         default:
                             break;
                     } //End Switch
@@ -66,13 +59,11 @@ namespace Assignment1
             }
         }//end of customerMenu
 
-
         public static void customerProductPrint(int prodInput, Store currentStore)
         {
-
             List<int> storeItemsIntID = new List<int>();//List to locally store items selected stores inventory, via ItemID
-
-            currentStore.getStoreInv(storeItemsIntID); //Accesses the StoreInventory db to get items and qunatity in store         
+            currentStore.getStoreInv(storeItemsIntID); 
+            //Accesses the StoreInventory db to get items and qunatity in store         
             // Then creates new items (id, name and quantity) and adds them to the local store objects inventory
 
             Console.WriteLine("{0,-5}  {1,-22} {2,-30}", "ID", "Product", "Current Stock");
@@ -83,7 +74,6 @@ namespace Assignment1
             {
                 int choice = 0;
                 while (choice == 0)
-
                 {
                     int userChoice = 0;
                     foreach (Item i in currentStore.localStoreInventory.Skip(pageOffset).Take(pageSize).ToList())
@@ -112,18 +102,10 @@ namespace Assignment1
                     {
                         int storeSelect = currentStore.getId();
                         choice = userChoice;
-
                         prodInput = choice;
-                        //passID = choice;
-
-                        //Console.WriteLine("Prod input in PRODUCTPRINT is " + prodInput);
                         purcharse(prodInput, storeSelect, currentStore);
-                        //return prodInput;
-                        //return;
-                        MainClass.mainMenu();
-
+                        MainClass.mainMenu();//After purchasing an item, user is sent back to the main menu
                     }
-
                     else
                     {
                         Console.WriteLine("Please input a product ID or command");
@@ -137,15 +119,11 @@ namespace Assignment1
                 Console.WriteLine("System Exception : " + e.Message);
             }
 
-            //Console.WriteLine("Prod input AT END OF PRODUCTPRINT is " + prodInput);
-
         }//End of productPrint
 
         public static void purcharse(int prodInput, int storeSelect, Store currentStore) //Writes the items purchased back to database 
         {
-
             bool canBuy = false;
-            //Console.WriteLine("Prod input in PURCHASE  is " + prodInput);
 
             string name = null;
             int oldQuant = 0;
@@ -153,14 +131,8 @@ namespace Assignment1
 
             int newQuant = Convert.ToInt32(Console.ReadLine());
 
-            //Console.WriteLine("Store ID is " + storeSelect);
-            //Console.WriteLine("Prod input is " + prodInput);
-            //Console.WriteLine("Quant is " + newQuant);
-
-
             foreach (Item purchasedItem in currentStore.localStoreInventory)
             {
-
                 if (purchasedItem.getId() == prodInput)
                 {
                     name = purchasedItem.getName();
@@ -173,8 +145,6 @@ namespace Assignment1
             {
                 Console.WriteLine("{0} doesn't have enough stock to fulfil the purchase", name);
                 canBuy = false;
-
-                //mainMenu();
                 return;
             }
             if (canBuy == true)
@@ -182,19 +152,30 @@ namespace Assignment1
                 using (var sqlOp = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
 
                 {
-                    //Console.WriteLine("Bool worked");
+                    sqlOp.Open();
                     var selectedProduct = prodInput;
                     var storeInvToAccess = storeSelect;
 
-                    sqlOp.Open();
+                    //Gets the current stock from the Store inventory and subtracts the StockRequest
+                    SqlCommand OwnerUpdateInv = new SqlCommand();
+                    OwnerUpdateInv.CommandType = CommandType.Text;
+
+                    OwnerUpdateInv.Parameters.Add("prodID", SqlDbType.VarChar).Value = selectedProduct;
+                    OwnerUpdateInv.Parameters.Add("storeID", SqlDbType.VarChar).Value = storeInvToAccess;
+
+                    OwnerUpdateInv.CommandText = "SELECT StockLevel FROM StoreInventory WHERE ProductID = @prodID AND StoreID = @storeID";
+                    OwnerUpdateInv.Connection = sqlOp;
+                    Int32 storeQuant = (Int32)OwnerUpdateInv.ExecuteScalar();
+
+                    storeQuant = storeQuant - newQuant;
 
                     var sqlText = @"UPDATE StoreInventory
-                SET StockLevel = @quantity
-                WHERE ProductID = @inventoryID
-                AND StoreID = @storeID";
+                                   SET StockLevel = @quantity
+                                   WHERE ProductID = @inventoryID
+                                   AND StoreID = @storeID";
 
                     SqlCommand dbCommand = new SqlCommand(sqlText, sqlOp);
-                    dbCommand.Parameters.AddWithValue("quantity", newQuant);
+                    dbCommand.Parameters.AddWithValue("quantity", storeQuant);
                     dbCommand.Parameters.AddWithValue("inventoryID", selectedProduct);
                     dbCommand.Parameters.AddWithValue("storeID", storeSelect);
 
@@ -206,13 +187,11 @@ namespace Assignment1
                     Console.WriteLine("Purchased {0} of {1}", newQuant, name);
                     Console.WriteLine("\n======================\n");
                     return;
-
                 }
             }
             else if (canBuy == false)
             {
                 customerMenu();
-                //return;
             }
         } //end of purcharse()
 
@@ -220,14 +199,11 @@ namespace Assignment1
 
         public static List<int> getStoreInv(List<int> storeItems, int storeSelect)
         {
-
             var selectedID = storeSelect;
-
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
             //Creates a new SQL connection "object"
             {
                 connection.Open();
-
                 var sqlText = "select * from StoreInventory where StoreID = @find";
 
                 SqlCommand dbCommand = new SqlCommand(sqlText, connection);
@@ -244,13 +220,10 @@ namespace Assignment1
 
                 foreach (var row in table.Select())
                 {
-                    //ADD ITEM ID'S TO LIST HERE
                     int itemInStoreInv = (int)row["ProductID"];
-                    //Console.WriteLine("Passing :" +itemInStoreInv);
                     storeItems.Add(itemInStoreInv);
                 }
                 connection.Close();
-
             }
 
             return storeItems;
@@ -258,16 +231,11 @@ namespace Assignment1
 
         public static int storePrint(int storeSelect)
         {
-
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-            //Creates a new SQL connection "object"
             {
                 connection.Open();
-                //Opens said "object"
-
                 var command = connection.CreateCommand();
-                //Creates a command
-                command.CommandText = "select * from Store"; //Sets the text for the command
+                command.CommandText = "select * from Store"; 
 
                 var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
                 var adapter = new SqlDataAdapter(command); //Creats a new SqlDataAdapter object with the above command
@@ -276,9 +244,8 @@ namespace Assignment1
 
                 Console.WriteLine("{0,-10}  {1,-10} ", "ID", "Name");
 
-                foreach (var row in table.Select())
+                foreach (var row in table.Select())//Loops over the table like a List to print
                 {
-
                     Console.WriteLine(
                         "{0,-10}  {1,-10} ", row["StoreID"], row["Name"]);
                 }
@@ -293,15 +260,10 @@ namespace Assignment1
                     if (userinput == StoreID)
                     {
                         storeSelect = ((int)row["StoreId"]);
-
                     }
-
                 }
-
                 connection.Close();
-
             }
-
             return storeSelect;
         }//End of store print
     }

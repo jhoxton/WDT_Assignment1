@@ -48,19 +48,16 @@ namespace Assignment1
             stock = itemStock;
         }
 
-        public string listStore(int itemInStoreID)
-        { //This gets the item name when a store is populated with stock
-
+        public string listStore(int itemInStoreID) //This gets the item name when a store is populated with stock
+        { 
             string prodName = null;
 
             using (var connection = new SqlConnection("server=wdt2018.australiaeast.cloudapp.azure.com;uid=s3609685;database=s3609685;pwd=abc123"))
-
+                //Creates new Sql connection object
             {
-                connection.Open();
-                //Opens said "object"
+                connection.Open();//Opens said object
 
-                var command = connection.CreateCommand();
-                //Creates a command
+                var command = connection.CreateCommand();//Creates a command
                 command.CommandText = "select * from Product"; //Sets the text for the command
 
                 var table = new DataTable();//Creates a datatable object to store what has been retrieved from the db
@@ -79,8 +76,6 @@ namespace Assignment1
                 }
                 connection.Close();
             }
-
-
             return prodName;
         }
 
